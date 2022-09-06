@@ -1,0 +1,15 @@
+.panel {
+  color: var(--yt-spec-text-primary);
+  border: 1px solid var(--yt-spec-10-percent-layer);
+  margin-bottom: var(--ytd-margin-6x);
+
+  .list-content {
+    max-height: 50vh;
+    overflow-y: scroll !important;
+  }
+
+  .footer {
+    background: var(--yt-spec-brand-background-primary);
+    padding: 1em 16px;
+  }
+}

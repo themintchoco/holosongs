@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Youtube-Holodex",
+
+  "permissions": [
+    "storage"
+  ],
+  
+  "host_permissions": [
+    "*://*.youtube.com/*"
+  ],
+
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+}

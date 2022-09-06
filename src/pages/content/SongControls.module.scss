@@ -1,0 +1,40 @@
+.song-info {
+  display: block;
+  text-align: center;
+  font-family: var(--ytd-video-primary-info-renderer-title-font-family, inherit);
+  font-weight: bold;
+  margin-top: 1em;
+}
+
+.song-title {
+  composes: song-info;
+  font-size: var(--ytd-video-primary-info-renderer-title-font-size, 2em);
+}
+
+.song-subtitle {
+  composes: song-info;
+  font-size: var(--ytd-video-primary-info-renderer-title-font-size, 1.5em);
+}
+
+.control-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 2em 0;
+}
+
+.control-button {
+  cursor: pointer;
+}
+
+.toggle-button {
+  composes: control-button;
+
+  border-radius: 4px;
+  padding: 1px;
+  margin: 1em;
+
+  &.active {
+    background-color: #f44;
+  }
+}

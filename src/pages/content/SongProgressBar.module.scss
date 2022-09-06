@@ -1,0 +1,61 @@
+.container {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+
+  .bar-outer {
+    padding: 1em 0;
+    margin: 0 1em;
+    width: 100%;
+    height: 0.35em;
+    cursor: pointer;
+  
+    .bar {
+      display: flex;
+      align-items: center;
+      background-color: var(--yt-spec-10-percent-layer);
+      height: 100%;
+  
+      &.pulsing {
+        @keyframes pulse {
+            from { opacity: 1; }
+            to { opacity: 0.3; }
+        }
+  
+        animation: pulse 3s ease-in-out infinite alternate;
+      }
+  
+      .fill {
+        width: 0px;
+        height: 100%;
+        background-color: #f00;
+      }
+  
+      .ghost {
+        width: 0px;
+        height: 100%;
+        background-color: var(--yt-spec-10-percent-layer);
+        opacity: 0;
+        transition: opacity 200ms;
+      }
+  
+      .dot {
+        border-radius: 50%;
+        background-color: #f00;
+        width: 0px;
+        height: 0px;
+        transition: all 200ms;
+      }
+    }
+  
+    &:hover .bar:not(.pulsing) .dot {
+      width: 12px;
+      height: 12px;
+      margin-left: -6px;
+    }
+  
+    &:hover .ghost {
+      opacity: 1;
+    }
+  }
+}
