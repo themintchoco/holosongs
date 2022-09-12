@@ -1,9 +1,12 @@
+import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
+import WebExtensionPlugin from 'webpack-target-webextension'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
+import { isNotJunk } from 'junk'
 
 import packageJson from './package.json' assert {type: 'json'}
 
@@ -21,6 +24,9 @@ const config = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name].js',
+    environment: {
+      dynamicImport: true,
+    }
   },
   
   module: {
@@ -38,6 +44,15 @@ const config = {
                 '@babel/preset-env',
                 ['@babel/preset-react', { runtime: 'automatic' }],
                 '@babel/preset-typescript',
+              ],
+              plugins: [
+                ['i18next-extract', {
+                  locales: fs.readdirSync(path.join(__dirname, 'src', 'common', 'locales')).filter(isNotJunk),
+                  outputPath: path.resolve(__dirname, 'src', 'common', 'locales', '{{locale}}', '{{ns}}.json'),
+                  defaultValue: null,
+                  useI18nextDefaultValue: true,
+                  discardOldKeys: true,
+                }],
               ],
             },
           },
@@ -120,6 +135,9 @@ const config = {
       template: path.join(__dirname, 'src', 'pages', 'options', 'index.html'),
       filename: 'options.html',
       chunks: ['options'],
+    }),
+    new WebExtensionPlugin({
+      weakRuntimeCheck: true,
     }),
   ],
 

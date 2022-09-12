@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client'
 
+import '../../common/i18next'
 import { ChakraProvider } from '@chakra-ui/react'
 
 import './index.scss'

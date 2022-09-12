@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 import useStorage from '../../hooks/useStorage'
 import { Song, RepeatMode, MusicMode } from './Content'
 import YoutubePanel, { YoutubePanelHeader, YoutubePanelListContent, YoutubePanelFooter } from './YoutubePanel'
@@ -38,11 +40,12 @@ const SongsPanel = ({
   onToggleRepeatMode,
   onToggleMusicMode,
 }: SongsPanelProps) => {
+  const { t } = useTranslation('content')
   const [showSongControls] = useStorage('showSongControls', true)
 
   return (
     <YoutubePanel>
-      <YoutubePanelHeader title='Songs' />
+      <YoutubePanelHeader title={t('songsPanel.header.title')} />
       <YoutubePanelListContent>
         {
           songs.map((song) => (

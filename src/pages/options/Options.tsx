@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 
+import { Trans, useTranslation } from 'react-i18next'
 import { useForm, Controller } from 'react-hook-form'
 import { MdLaunch } from 'react-icons/md'
 import {
@@ -16,6 +17,7 @@ import {
   Icon,
   Input,
   Link,
+  Select,
   Spacer,
   Switch,
   Tooltip,
@@ -25,6 +27,7 @@ import {
 import useStorage from '../../hooks/useStorage'
 
 const Options = () => {
+  const [ t, i18n ] = useTranslation('options')
   const [apiKey, setApiKey] = useStorage('apiKey', '')
   const [showDexButton, setShowDexButton] = useStorage('showDexButton', true)
   const [showSongControls, setShowSongControls] = useStorage('showSongControls', true)
@@ -51,7 +54,7 @@ const Options = () => {
     reset({ apiKey, showDexButton, showSongControls }, { keepIsSubmitted: true })
   }, [apiKey, showDexButton, showSongControls])
 
-  const validateApiKey = (apiKey: string) => {  
+  const validateApiKey = (apiKey: string) => {
     if (!dirtyFields.apiKey) return true
 
     return fetch('https://holodex.net/api/v2/videos', {
@@ -59,13 +62,17 @@ const Options = () => {
         'X-APIKEY': apiKey
       }
     }).then((r) => {
-      if (r.status >= 500) return 'There was an error. Please try again at a later time.'
-      if (r.status >= 400) return 'Invalid API Key. Please ensure that it has been entered correctly.'
+      if (r.status >= 500) throw new Error(t('apiKey.errors.serverError'))
+      if (r.status >= 400) throw new Error(t('apiKey.errors.invalidKey'))
 
       return true
-    }).catch(() => {
-      return 'Error validating key. Please try again at a later time.'
+    }).catch((e) => {
+      return e.message ?? t('apiKey.errors.serverError')
     })
+  }
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    i18n.changeLanguage(e.target.value)
   }
 
   const onSubmit = async (prefs) => {
@@ -80,23 +87,25 @@ const Options = () => {
         isSubmitted && (
           <Alert status='success' variant='left-accent' mb='1em'>
             <AlertIcon />
-            <AlertTitle>Saved changes</AlertTitle>
+            <AlertTitle>{t('savedChanges')}</AlertTitle>
           </Alert>
         )
       }
 
       <FormControl isInvalid={!isValid} isRequired>
-        <FormLabel htmlFor='apiKey'>API Key</FormLabel>
+        <FormLabel htmlFor='apiKey'>{t('apiKey.label')}</FormLabel>
         <Input id='apiKey' type='text' {...register('apiKey', {
           required: 'API Key is required.',
           setValueAs: (v) => v.trim(),
           validate: validateApiKey,
         })} />
         <FormHelperText>
-          Get your API key from your{' '}
-          <Link href='https://holodex.net/login' isExternal>
-            account settings <Icon as={MdLaunch} verticalAlign='middle' />
-          </Link>
+          <Trans i18nKey='options:apiKey.helper'>
+            Get your API key from your
+            <Link href='https://holodex.net/login' isExternal>
+              account settings <Icon as={MdLaunch} verticalAlign='middle' />
+            </Link>
+          </Trans>
         </FormHelperText>
         <FormErrorMessage>
           { errors.apiKey?.message }
@@ -108,7 +117,7 @@ const Options = () => {
       <VStack spacing='1.5em'>
         <FormControl>
           <Flex>
-            <FormLabel htmlFor='showSongControls'>Show song controls</FormLabel>
+            <FormLabel htmlFor='showSongControls'>{t('showSongControls.label')}</FormLabel>
             <Spacer />
             <Controller
               name='showSongControls'
@@ -122,7 +131,7 @@ const Options = () => {
 
         <FormControl>
           <Flex>
-            <FormLabel htmlFor='showDexButton'>Show Holodex button in player</FormLabel>
+            <FormLabel htmlFor='showDexButton'>{t('showDexButton.label')}</FormLabel>
             <Spacer />
             <Controller
               name='showDexButton'
@@ -138,9 +147,14 @@ const Options = () => {
       <Divider my='2em' />
 
       <Flex>
+        <Select variant='filled' onChange={handleLanguageChange} defaultValue={i18n.language} display='inline-block' width='auto'>
+          <option value='en-US'>English</option>
+        </Select>
+
         <Spacer />
-        <Tooltip label='No changes to save' isDisabled={isDirty} shouldWrapChildren>
-          <Button colorScheme='blue' isDisabled={!isDirty} isLoading={isSubmitting} type='submit'>Save</Button>
+
+        <Tooltip label={t('submit.noChanges')} isDisabled={isDirty} shouldWrapChildren>
+          <Button colorScheme='blue' isDisabled={!isDirty} isLoading={isSubmitting} type='submit'>{t('submit.title')}</Button>
         </Tooltip>
       </Flex>
     </form>
