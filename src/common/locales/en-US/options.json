@@ -12,7 +12,7 @@
     "label": "Show Holodex button in player"
   },
   "showSongControls": {
-    "label": "Show song controls"
+    "label": "Show playback controls"
   },
   "submit": {
     "noChanges": "No changes to save",
