@@ -25,6 +25,8 @@ import {
 } from '@chakra-ui/react'
 
 import useStorage from '../../hooks/useStorage'
+import { BrowserMessageType } from '../../common/types/BrowserMessage'
+import { messageAll } from '../../common/utils/message'
 
 const Options = () => {
   const [ t, i18n ] = useTranslation('options')
@@ -71,8 +73,9 @@ const Options = () => {
     })
   }
 
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    i18n.changeLanguage(e.target.value)
+  const handleLanguageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    await i18n.changeLanguage(e.target.value)
+    messageAll({ type: BrowserMessageType.languageChanged })
   }
 
   const onSubmit = async (prefs) => {

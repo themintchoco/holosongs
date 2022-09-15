@@ -12,7 +12,7 @@ i18n
     fallbackLng: 'en-US',
     interpolation: {
       escapeValue: false,
-    }
+    },
   })
 
 export default i18n
