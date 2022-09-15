@@ -46,7 +46,6 @@ const Content = ({ player, videoId, songsPanelContainer, dexLinkContainer } : Co
   const [musicMode, setMusicMode] = useState(MusicMode.Off)
 
   useEffect(() => {
-    setCurrentSong(null)
     if (!videoId || !apiKey) return setSongs([])
 
     fetch(`https://holodex.net/api/v2/videos?id=${videoId}&include=songs`, {
@@ -62,6 +61,10 @@ const Content = ({ player, videoId, songsPanelContainer, dexLinkContainer } : Co
         setSongs([])
       })
   }, [videoId, apiKey])
+
+  useEffect(() => {
+    setCurrentSong(null)
+  }, [songs])
 
   useEffect(() => {
     if (!video || playingAd) return
