@@ -1,0 +1,21 @@
+{
+  "apiKey": {
+    "errors": {
+      "invalidKey": "APIキーが無効です。ご確認の上、再度お試しください。",
+      "serverError": "問題が発生しました。後ほどもう一度お試しください。"
+    },
+    "helper": "APIキーは <1>アカウント設定<1></1></1> から取得してください",
+    "label": "APIキー"
+  },
+  "savedChanges": "変更の保存に成功しました",
+  "showDexButton": {
+    "label": "Holodex ボタンを表示する"
+  },
+  "showSongControls": {
+    "label": "メディアコントロールを表示する"
+  },
+  "submit": {
+    "noChanges": "変更なし",
+    "title": "保存"
+  }
+}

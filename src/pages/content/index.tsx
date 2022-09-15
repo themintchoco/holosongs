@@ -1,5 +1,7 @@
 import { createRoot } from 'react-dom/client'
 
+import i18n from '../../common/i18next'
+
 import { BrowserMessageType, type BrowserMessage } from '../../common/types/BrowserMessage'
 import { ensureSelector, injectElement } from '../../common/utils/dom-watch'
 import Content from './Content'
@@ -24,6 +26,9 @@ import Content from './Content'
       if (message.status !== 'complete' || id === videoId) return
       videoId = id
       break
+    case BrowserMessageType.languageChanged:
+      i18n.changeLanguage()
+      return
     default:
       return
     }

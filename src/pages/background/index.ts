@@ -1,4 +1,5 @@
 import { BrowserMessageType } from '../../common/types/BrowserMessage'
+import { messageOne, messageAll } from '../../common/utils/message'
 
 chrome.runtime.onInstalled.addListener(({ reason }) => {
   if (reason === chrome.runtime.OnInstalledReason.INSTALL) {
@@ -6,14 +7,12 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
   }
 })
 
-chrome.runtime.onUpdateAvailable.addListener(async ({ version }) => {
-  const tabs = await chrome.tabs.query({ url: '<all_urls>' })
-  Promise.allSettled(tabs.map(tab => chrome.tabs.sendMessage(tab.id, { type: BrowserMessageType.updateAvailable, version })))
+chrome.runtime.onUpdateAvailable.addListener(({ version }) => {
+  messageAll({ type: BrowserMessageType.updateAvailable, version })
 })
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
   if (changeInfo.status) {
-    chrome.tabs.sendMessage(tabId, { type: BrowserMessageType.tabStatusChange, status: changeInfo.status })
-      .catch(() => null)
+    messageOne(tabId, { type: BrowserMessageType.tabStatusChange, status: changeInfo.status })
   }
 })

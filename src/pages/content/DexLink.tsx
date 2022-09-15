@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import cx from 'classnames'
 
 import styles from './DexLink.module.scss'
@@ -8,11 +9,13 @@ export interface DexLinkProps {
 }
 
 const DexLink = ({ onClick } : DexLinkProps) => {
+  const { t } = useTranslation('content')
+
   return (
     <button
       className={cx(styles.dexlinkBtn, 'ytp-button')}
       onClick={onClick}
-      title='Open in Holodex'>
+      title={t('dexLink.title')}>
       <HolodexLogo width='2em' height='2em' />
     </button>
   )
