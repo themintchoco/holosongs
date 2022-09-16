@@ -2,6 +2,7 @@
   "apiKey": {
     "errors": {
       "invalidKey": "此密鑰無效，請檢查並重試。",
+      "required": "請輸入API密鑰。",
       "serverError": "出了點問題，請稍後重試。"
     },
     "helper": "您可以從 <1>帳號設定<1></1></1> 取得您的API密鑰",

@@ -2,6 +2,7 @@
   "apiKey": {
     "errors": {
       "invalidKey": "Invalid API key. Please check your key and try again.",
+      "required": "Please enter your API key.",
       "serverError": "There was an error validating your API key. Please try again later."
     },
     "helper": "Get your API key from your <1>account settings <1></1></1>",

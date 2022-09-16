@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Trans, useTranslation } from 'react-i18next'
 import { useForm, Controller } from 'react-hook-form'
@@ -29,10 +29,14 @@ import { BrowserMessageType } from '../../common/types/BrowserMessage'
 import { messageAll } from '../../common/utils/message'
 
 const Options = () => {
-  const [ t, i18n ] = useTranslation('options')
+  const [t, i18n] = useTranslation('options')
+  const [showAlert, setShowAlert] = useState(false)
+
   const [apiKey, setApiKey] = useStorage('apiKey', '')
   const [showDexButton, setShowDexButton] = useStorage('showDexButton', true)
   const [showSongControls, setShowSongControls] = useStorage('showSongControls', true)
+  
+  const prefs = { apiKey, showDexButton, showSongControls }
 
   const {
     handleSubmit,
@@ -40,21 +44,19 @@ const Options = () => {
     reset,
     control,
     formState: {
-      isValid,
-      isSubmitting,
-      isSubmitted,
-      errors,
+      isDirty,
       dirtyFields,
-      isDirty
-    }
+      isSubmitting,
+      errors,
+    },
   } = useForm({
-    defaultValues: { apiKey, showDexButton, showSongControls },
+    defaultValues: prefs,
     reValidateMode: 'onSubmit',
   })
 
   useEffect(() => {
-    reset({ apiKey, showDexButton, showSongControls }, { keepIsSubmitted: true })
-  }, [apiKey, showDexButton, showSongControls])
+    reset(prefs)
+  }, Object.values(prefs))
 
   const validateApiKey = (apiKey: string) => {
     if (!dirtyFields.apiKey) return true
@@ -78,16 +80,18 @@ const Options = () => {
     messageAll({ type: BrowserMessageType.languageChanged })
   }
 
-  const onSubmit = async (prefs) => {
-    setApiKey(prefs.apiKey)
-    setShowDexButton(prefs.showDexButton)
-    setShowSongControls(prefs.showSongControls)
+  const onSubmit = async (newPrefs: typeof prefs) => {
+    setApiKey(newPrefs.apiKey)
+    setShowDexButton(newPrefs.showDexButton)
+    setShowSongControls(newPrefs.showSongControls)
+
+    setShowAlert(true)
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {
-        isSubmitted && (
+        showAlert && (
           <Alert status='success' variant='left-accent' mb='1em'>
             <AlertIcon />
             <AlertTitle>{t('savedChanges')}</AlertTitle>
@@ -95,13 +99,16 @@ const Options = () => {
         )
       }
 
-      <FormControl isInvalid={!isValid} isRequired>
+      <FormControl isInvalid={!!errors.apiKey} isRequired>
         <FormLabel htmlFor='apiKey'>{t('apiKey.label')}</FormLabel>
         <Input id='apiKey' type='text' {...register('apiKey', {
-          required: 'API Key is required.',
+          required: t('apiKey.errors.required'),
           setValueAs: (v) => v.trim(),
           validate: validateApiKey,
         })} />
+        <FormErrorMessage>
+          { errors.apiKey?.message }
+        </FormErrorMessage>
         <FormHelperText>
           <Trans i18nKey='options:apiKey.helper'>
             Get your API key from your
@@ -110,9 +117,6 @@ const Options = () => {
             </Link>
           </Trans>
         </FormHelperText>
-        <FormErrorMessage>
-          { errors.apiKey?.message }
-        </FormErrorMessage>
       </FormControl>
 
       <Divider my='2em' />

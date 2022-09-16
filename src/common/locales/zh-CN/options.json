@@ -2,6 +2,7 @@
   "apiKey": {
     "errors": {
       "invalidKey": "该密钥无效，请检查后重试。",
+      "required": "请输入API密钥。",
       "serverError": "出了点问题，请稍后重试。"
     },
     "helper": "您可以从 <1>账号设置<1></1></1> 获取您的API密钥",
