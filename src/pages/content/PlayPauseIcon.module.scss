@@ -1,0 +1,9 @@
+.icon {
+  background-color: currentColor;
+  transition: 200ms all ease-in-out;
+  clip-path: polygon(25% 20%, 50% 35%, 50% 65%, 50% 65%, 50% 35%, 75% 50%, 75% 50%, 25% 75%);
+
+  &.playing {
+    clip-path: polygon(25% 20%, 40% 20%, 40% 80%, 60% 80%, 60% 20%, 75% 20%, 75% 80%, 25% 80%);
+  }
+}

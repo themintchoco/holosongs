@@ -1,8 +1,9 @@
 import cx from 'classnames'
 
 import styles from './SongControls.module.scss'
+import PlayPauseIcon from './PlayPauseIcon'
 import { type Song, RepeatMode, MusicMode } from './Content'
-import { MdPlayArrow, MdPause, MdSkipPrevious, MdSkipNext, MdRepeat, MdRepeatOne, MdMusicNote } from 'react-icons/md'
+import { MdSkipPrevious, MdSkipNext, MdRepeat, MdRepeatOne, MdMusicNote } from 'react-icons/md'
 
 interface ControlButtonProps {
   onClick?: () => void,
@@ -67,17 +68,9 @@ const SongControls = ({
           <MdSkipPrevious size='4em' />
         </ControlButton>
 
-        {
-          playing ? (
-            <ControlButton onClick={onPause}>
-              <MdPause size='5em' />
-            </ControlButton>
-          ) : (
-            <ControlButton onClick={onPlay}>
-              <MdPlayArrow size='5em' />
-            </ControlButton>
-          )
-        }
+        <ControlButton onClick={playing ? onPause : onPlay}>
+          <PlayPauseIcon playing={playing} size='5em' />
+        </ControlButton>
 
         <ControlButton onClick={onSkipForward}>
           <MdSkipNext size='4em' />
