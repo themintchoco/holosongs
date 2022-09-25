@@ -18,5 +18,12 @@
   "submit": {
     "noChanges": "No changes to save",
     "title": "Save"
+  },
+  "updateChannels": {
+    "title": {
+      "default": "Update channels list",
+      "loading": "Updating channels...",
+      "success": "Updated channels successfully"
+    }
   }
 }

@@ -18,5 +18,12 @@
   "submit": {
     "noChanges": "変更なし",
     "title": "保存"
+  },
+  "updateChannels": {
+    "title": {
+      "default": null,
+      "loading": null,
+      "success": null
+    }
   }
 }

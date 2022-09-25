@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { Trans, useTranslation } from 'react-i18next'
 import { useForm, Controller } from 'react-hook-form'
-import { MdLaunch } from 'react-icons/md'
+import { MdCheck, MdLaunch } from 'react-icons/md'
 import {
   Alert,
   AlertIcon,
@@ -25,6 +25,7 @@ import {
 } from '@chakra-ui/react'
 
 import useStorage from '../../hooks/useStorage'
+import useChannelWhitelist from '../../hooks/useChannelWhitelist'
 import { BrowserMessageType } from '../../common/types/BrowserMessage'
 import { messageAll } from '../../common/utils/message'
 
@@ -32,9 +33,14 @@ const Options = () => {
   const [t, i18n] = useTranslation('options')
   const [showAlert, setShowAlert] = useState(false)
 
+  const [updatingWhitelist, setUpdatingWhitelist] = useState(false)
+  const [updatedWhitelist, setUpdatedWhitelist] = useState(false)
+
   const [apiKey, setApiKey] = useStorage('apiKey', '')
   const [showDexButton, setShowDexButton] = useStorage('showDexButton', true)
   const [showSongControls, setShowSongControls] = useStorage('showSongControls', true)
+
+  const { updateWhitelist } = useChannelWhitelist()
   
   const prefs = { apiKey, showDexButton, showSongControls }
 
@@ -75,6 +81,14 @@ const Options = () => {
     })
   }
 
+  const handleUpdateWhitelist = async () => {
+    setUpdatingWhitelist(true)
+    await updateWhitelist()
+
+    setUpdatingWhitelist(false)
+    setUpdatedWhitelist(true)
+  }
+
   const handleLanguageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     await i18n.changeLanguage(e.target.value)
     messageAll({ type: BrowserMessageType.languageChanged })
@@ -92,7 +106,7 @@ const Options = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       {
         showAlert && (
-          <Alert status='success' variant='left-accent' mb='1em'>
+          <Alert status='success' variant='left-accent' mb={2}>
             <AlertIcon />
             <AlertTitle>{t('savedChanges')}</AlertTitle>
           </Alert>
@@ -119,9 +133,9 @@ const Options = () => {
         </FormHelperText>
       </FormControl>
 
-      <Divider my='2em' />
+      <Divider my={4} />
 
-      <VStack spacing='1.5em'>
+      <VStack spacing={3}>
         <FormControl>
           <Flex>
             <FormLabel htmlFor='showSongControls'>{t('showSongControls.label')}</FormLabel>
@@ -151,7 +165,28 @@ const Options = () => {
         </FormControl>
       </VStack>
 
-      <Divider my='2em' />
+      <Divider my={4} />
+
+      <Flex>
+        <Button
+          colorScheme='blue'
+          variant='ghost'
+          mx='-20px'
+          px='20px'
+          borderRadius={0}
+          flexGrow={1}
+          justifyContent='space-between'
+          isLoading={updatingWhitelist}
+          isDisabled={updatedWhitelist}
+          spinnerPlacement='end'
+          rightIcon={updatedWhitelist && <MdCheck />}
+          loadingText={t('updateChannels.title.loading')}
+          onClick={handleUpdateWhitelist}>
+          { updatedWhitelist ? t('updateChannels.title.success') : t('updateChannels.title.default') }
+        </Button>
+      </Flex>
+
+      <Divider my={4} />
 
       <Flex>
         <Select variant='filled' onChange={handleLanguageChange} defaultValue={i18n.language} display='inline-block' width='auto'>
