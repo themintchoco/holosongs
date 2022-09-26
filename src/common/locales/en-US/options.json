@@ -8,6 +8,10 @@
     "helper": "Get your API key from your <1>account settings <1></1></1>",
     "label": "API Key"
   },
+  "enableWhitelist": {
+    "helper": "Only query the API when watching channels tracked by Holodex. This requires maintaining a local list of channels which must be updated from time to time (for example, after a debut).",
+    "label": "Limit API requests"
+  },
   "savedChanges": "Your changes were saved",
   "showDexButton": {
     "label": "Show Holodex button in player"
@@ -25,5 +29,11 @@
       "loading": "Updating channels...",
       "success": "Updated channels successfully"
     }
+  },
+  "whitelistStat": {
+    "label": "Channels",
+    "lastUpdated": "Updated {{lastUpdated, datetime(dateStyle: medium)}}",
+    "lastUpdatedNever": "Never updated",
+    "length": "{{length, number}}"
   }
 }

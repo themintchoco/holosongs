@@ -17,7 +17,7 @@ const useStorage = <T>(key: string, defaultValue?: T) : [T, (newValue: T) => voi
 
   useEffect(() => {
     storageArea.get(key)
-      .then(({ [key]: value }) => setValue(value))
+      .then(({ [key]: value }) => setValue(value === undefined ? defaultValue : value))
 
     storageArea.onChanged.addListener(handleStorageChange)
 

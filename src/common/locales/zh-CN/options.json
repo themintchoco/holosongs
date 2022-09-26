@@ -8,6 +8,10 @@
     "helper": "您可以从 <1>账号设置<1></1></1> 获取您的API密钥",
     "label": "API密钥"
   },
+  "enableWhitelist": {
+    "helper": null,
+    "label": null
+  },
   "savedChanges": "更改已成功保存",
   "showDexButton": {
     "label": "显示 Holodex 链接"
@@ -25,5 +29,11 @@
       "loading": null,
       "success": null
     }
+  },
+  "whitelistStat": {
+    "label": null,
+    "lastUpdated": null,
+    "lastUpdatedNever": null,
+    "length": null
   }
 }

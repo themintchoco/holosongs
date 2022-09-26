@@ -39,6 +39,7 @@ export interface ContentProps {
 const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkContainer } : ContentProps) => {
   const [apiKey] = useStorage<string>('apiKey')
   const [showDexButton] = useStorage('showDexButton', true)
+  const [enableWhitelist] = useStorage('enableWhitelist', false)
 
   const { isWhitelisted } = useChannelWhitelist()
   const { video, paused, currentTime, playingAd } = useYoutubePlayer(player)
@@ -49,7 +50,7 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
   const [musicMode, setMusicMode] = useState(MusicMode.Off)
 
   useEffect(() => {
-    if (!videoId || !apiKey || !isWhitelisted(channelId)) return setSongs([])
+    if (!videoId || !apiKey || (enableWhitelist && !isWhitelisted(channelId))) return setSongs([])
 
     fetch(`https://holodex.net/api/v2/videos?id=${videoId}&include=songs`, {
       headers: {

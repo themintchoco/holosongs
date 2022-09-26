@@ -3,6 +3,7 @@ import useStorage from './useStorage'
 const useChannelWhitelist = () => {
   const [apiKey] = useStorage<string>('apiKey')
   const [whitelist, setWhitelist] = useStorage<Record<string, boolean>>('whitelist', {})
+  const [whitelistLastUpdated, setWhitelistLastUpdated] = useStorage<number>('whitelistLastUpdated')
 
   const isWhitelisted = (channelId: string) => {
     return channelId in whitelist
@@ -28,9 +29,12 @@ const useChannelWhitelist = () => {
     }
 
     setWhitelist(newWhitelist)
+    setWhitelistLastUpdated((new Date()).getTime())
   }
 
-  return { isWhitelisted, updateWhitelist }
+  const lastUpdated = whitelistLastUpdated && new Date(whitelistLastUpdated)
+
+  return { whitelist, isWhitelisted, updateWhitelist, lastUpdated }
 }
 
 export default useChannelWhitelist

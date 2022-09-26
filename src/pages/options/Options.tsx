@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Trans, useTranslation } from 'react-i18next'
 import { useForm, Controller } from 'react-hook-form'
@@ -8,6 +8,7 @@ import {
   AlertIcon,
   AlertTitle,
   Button,
+  Collapse,
   Divider,
   Flex,
   FormControl,
@@ -19,6 +20,10 @@ import {
   Link,
   Select,
   Spacer,
+  Stat,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
   Switch,
   Tooltip,
   VStack,
@@ -39,16 +44,18 @@ const Options = () => {
   const [apiKey, setApiKey] = useStorage('apiKey', '')
   const [showDexButton, setShowDexButton] = useStorage('showDexButton', true)
   const [showSongControls, setShowSongControls] = useStorage('showSongControls', true)
+  const [enableWhitelist, setEnableWhitelist] = useStorage('enableWhitelist', false)
 
-  const { updateWhitelist } = useChannelWhitelist()
+  const { whitelist, updateWhitelist, lastUpdated } = useChannelWhitelist()
   
-  const prefs = { apiKey, showDexButton, showSongControls }
+  const prefs = { apiKey, showDexButton, showSongControls, enableWhitelist }
 
   const {
     handleSubmit,
     register,
     reset,
     control,
+    watch,
     formState: {
       isDirty,
       dirtyFields,
@@ -59,6 +66,12 @@ const Options = () => {
     defaultValues: prefs,
     reValidateMode: 'onSubmit',
   })
+
+  const watchEnableWhitelist = watch('enableWhitelist')
+
+  const whitelistLength = useMemo(() => {
+    return Object.keys(whitelist).length
+  }, [whitelist])
 
   useEffect(() => {
     reset(prefs)
@@ -98,6 +111,7 @@ const Options = () => {
     setApiKey(newPrefs.apiKey)
     setShowDexButton(newPrefs.showDexButton)
     setShowSongControls(newPrefs.showSongControls)
+    setEnableWhitelist(newPrefs.enableWhitelist)
 
     setShowAlert(true)
   }
@@ -167,28 +181,66 @@ const Options = () => {
 
       <Divider my={4} />
 
-      <Flex>
-        <Button
-          colorScheme='blue'
-          variant='ghost'
-          mx='-20px'
-          px='20px'
-          borderRadius={0}
-          flexGrow={1}
-          justifyContent='space-between'
-          isLoading={updatingWhitelist}
-          isDisabled={updatedWhitelist}
-          spinnerPlacement='end'
-          rightIcon={updatedWhitelist && <MdCheck />}
-          loadingText={t('updateChannels.title.loading')}
-          onClick={handleUpdateWhitelist}>
-          { updatedWhitelist ? t('updateChannels.title.success') : t('updateChannels.title.default') }
-        </Button>
-      </Flex>
+      <VStack spacing={3} align='stretch'>
+        <FormControl>
+          <Flex>
+            <FormLabel htmlFor='enableWhitelist'>{t('enableWhitelist.label')}</FormLabel>
+            <Spacer />
+            <Controller
+              name='enableWhitelist'
+              control={control}
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <Switch id='enableWhitelist' onChange={onChange} onBlur={onBlur} isChecked={value} name={name} ref={ref} />
+              )}
+            />
+          </Flex>
+          <FormHelperText>
+            { t('enableWhitelist.helper') }
+          </FormHelperText>
+        </FormControl>
 
-      <Divider my={4} />
+        <Flex style={{marginInline: '-20px'}}>
+          <Collapse
+            in={watchEnableWhitelist}
+            style={{flexGrow: 1}}>
+            <VStack align='stretch'>
+              <Button
+                colorScheme='blue'
+                variant='ghost'
+                px='20px'
+                borderRadius={0}
+                justifyContent='space-between'
+                isLoading={updatingWhitelist}
+                isDisabled={updatedWhitelist}
+                spinnerPlacement='end'
+                rightIcon={updatedWhitelist && <MdCheck />}
+                loadingText={t('updateChannels.title.loading')}
+                onClick={handleUpdateWhitelist}>
+                { updatedWhitelist ? t('updateChannels.title.success') : t('updateChannels.title.default') }
+              </Button>
 
-      <Flex>
+              <Stat px='20px'>
+                <StatLabel>{t('whitelistStat.label')}</StatLabel>
+                <StatNumber>{t('whitelistStat.length', { length: whitelistLength })}</StatNumber>
+                <StatHelpText>
+                  { lastUpdated ? t('whitelistStat.lastUpdated', { lastUpdated }) : t('whitelistStat.lastUpdatedNever')}
+                </StatHelpText>
+              </Stat>
+            </VStack>
+          </Collapse>
+        </Flex>
+      </VStack>
+
+      <Flex
+        mt={4}
+        py={4}
+        mx='-20px'
+        px='20px'
+        position='sticky'
+        bottom={0}
+        bgColor='Background'
+        borderTop='1px'
+        borderColor='inherit'>
         <Select variant='filled' onChange={handleLanguageChange} defaultValue={i18n.language} display='inline-block' width='auto'>
           <option value='en-US'>English</option>
           <option value='ja-JP'>日本語</option>
