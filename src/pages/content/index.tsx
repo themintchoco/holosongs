@@ -17,8 +17,9 @@ import Content from './Content'
   let videoId: string | null = null
 
   const getChannelId = async () => {
-    const channelAnchorSelector = 'ytd-video-owner-renderer a[href*="channel/UC"]:not([href*="stale=1"])'
-    const channelId = /UC[-_0-9A-Za-z]{21}[AQgw]/.exec((await ensureSelector(channelAnchorSelector) as HTMLAnchorElement).href)?.[0]
+    const channelAnchorSelector = 'ytd-video-owner-renderer a[href]:not([href*="stale=1"])'
+    const channelURL = (await ensureSelector(channelAnchorSelector) as HTMLAnchorElement).href
+    const channelId = /UC[-_0-9A-Za-z]{21}[AQgw]/.exec(channelURL)?.[0]
 
     // Mark as stale
     document.querySelectorAll(channelAnchorSelector).forEach((el: HTMLAnchorElement) => {
@@ -28,7 +29,12 @@ import Content from './Content'
       el.href = url.toString()
     })
 
-    return channelId
+    // Fallback to fetch request if vanity URL
+    return channelId ?? fetch(channelURL)
+      .then((r) => r.text())
+      .then((html) => {
+        return /UC[-_0-9A-Za-z]{21}[AQgw]/.exec(html)?.[0]
+      })
   }
 
   chrome.runtime.onMessage.addListener(async (message: BrowserMessage, sender) => {
