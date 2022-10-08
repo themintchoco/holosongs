@@ -37,8 +37,6 @@ import { messageAll } from '../../common/utils/message'
 const Options = () => {
   const [t, i18n] = useTranslation('options')
   const [showAlert, setShowAlert] = useState(false)
-
-  const [updatingWhitelist, setUpdatingWhitelist] = useState(false)
   const [updatedWhitelist, setUpdatedWhitelist] = useState(false)
 
   const [apiKey, setApiKey] = useStorage('apiKey', '')
@@ -46,7 +44,7 @@ const Options = () => {
   const [showSongControls, setShowSongControls] = useStorage('showSongControls', true)
   const [enableWhitelist, setEnableWhitelist] = useStorage('enableWhitelist', false)
 
-  const { whitelist, updateWhitelist, lastUpdated } = useChannelWhitelist()
+  const { whitelist, updateWhitelist, whitelistLastUpdated, isWhitelistUpdating } = useChannelWhitelist()
   
   const prefs = { apiKey, showDexButton, showSongControls, enableWhitelist }
 
@@ -95,10 +93,7 @@ const Options = () => {
   }
 
   const handleUpdateWhitelist = async () => {
-    setUpdatingWhitelist(true)
     await updateWhitelist()
-
-    setUpdatingWhitelist(false)
     setUpdatedWhitelist(true)
   }
 
@@ -204,13 +199,21 @@ const Options = () => {
             in={watchEnableWhitelist}
             style={{flexGrow: 1}}>
             <VStack align='stretch'>
+              <Stat px='20px'>
+                <StatLabel>{t('whitelistStat.label')}</StatLabel>
+                <StatNumber>{t('whitelistStat.length', { length: whitelistLength })}</StatNumber>
+                <StatHelpText>
+                  { whitelistLastUpdated ? t('whitelistStat.lastUpdated', { whitelistLastUpdated }) : t('whitelistStat.lastUpdatedNever')}
+                </StatHelpText>
+              </Stat>
+
               <Button
                 colorScheme='blue'
                 variant='ghost'
                 px='20px'
                 borderRadius={0}
                 justifyContent='space-between'
-                isLoading={updatingWhitelist}
+                isLoading={isWhitelistUpdating}
                 isDisabled={updatedWhitelist}
                 spinnerPlacement='end'
                 rightIcon={updatedWhitelist && <MdCheck />}
@@ -218,14 +221,6 @@ const Options = () => {
                 onClick={handleUpdateWhitelist}>
                 { updatedWhitelist ? t('updateChannels.title.success') : t('updateChannels.title.default') }
               </Button>
-
-              <Stat px='20px'>
-                <StatLabel>{t('whitelistStat.label')}</StatLabel>
-                <StatNumber>{t('whitelistStat.length', { length: whitelistLength })}</StatNumber>
-                <StatHelpText>
-                  { lastUpdated ? t('whitelistStat.lastUpdated', { lastUpdated }) : t('whitelistStat.lastUpdatedNever')}
-                </StatHelpText>
-              </Stat>
             </VStack>
           </Collapse>
         </Flex>

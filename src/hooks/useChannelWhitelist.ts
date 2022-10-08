@@ -1,15 +1,19 @@
+import { useState } from 'react'
+
 import useStorage from './useStorage'
 
 const useChannelWhitelist = () => {
   const [apiKey] = useStorage<string>('apiKey')
   const [whitelist, setWhitelist] = useStorage<Record<string, boolean>>('whitelist', {})
-  const [whitelistLastUpdated, setWhitelistLastUpdated] = useStorage<number>('whitelistLastUpdated')
+  const [lastUpdated, setLastUpdated] = useStorage<number>('whitelistLastUpdated')
+  const [isWhitelistUpdating, setIsWhitelistUpdating] = useState(false)
 
   const isWhitelisted = (channelId: string) => {
     return channelId in whitelist
   }
 
   const updateWhitelist = async () => {
+    setIsWhitelistUpdating(true)
     const newWhitelist = {}
 
     let offset = 0
@@ -29,12 +33,13 @@ const useChannelWhitelist = () => {
     }
 
     setWhitelist(newWhitelist)
-    setWhitelistLastUpdated((new Date()).getTime())
+    setLastUpdated((new Date()).getTime())
+    setIsWhitelistUpdating(false)
   }
 
-  const lastUpdated = whitelistLastUpdated && new Date(whitelistLastUpdated)
+  const whitelistLastUpdated = lastUpdated && new Date(lastUpdated)
 
-  return { whitelist, isWhitelisted, updateWhitelist, lastUpdated }
+  return { whitelist, isWhitelisted, updateWhitelist, whitelistLastUpdated, isWhitelistUpdating }
 }
 
 export default useChannelWhitelist
