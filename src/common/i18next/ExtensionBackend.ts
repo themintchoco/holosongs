@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import type { BackendModule } from 'i18next'
 
 const ExtensionBackend : () => BackendModule = () => {
