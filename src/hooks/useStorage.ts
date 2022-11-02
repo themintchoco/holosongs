@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react'
 
-const useStorage = <T>(key: string, defaultValue?: T) : [T, (newValue: T) => void] => {
-  const [value, setValue] = useState(defaultValue)
+const useStorage = <T>(key: string, defaultValue?: T) : [T | undefined, (newValue: T | undefined) => void] => {
+  const [value, setValue] = useState<T>()
 
   const storageArea = chrome.storage.local
 
   const handleStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
     if (changes[key]) {
-      setValue(changes[key].newValue)
+      setValue(changes[key].newValue as T)
     }
   }
 
-  const setStorageValue = (newValue: T) => {
-    storageArea.set({ [key]: newValue })
+  const setStorageValue = (newValue: T | undefined) => {
+    return newValue === undefined ? storageArea.remove(key) : storageArea.set({ [key]: newValue })
   }
 
   useEffect(() => {
-    storageArea.get(key)
-      .then(({ [key]: value }) => setValue(value))
+    void storageArea.get(key)
+      .then(({ [key]: value }) => setValue(value === undefined ? defaultValue : value as T))
 
     storageArea.onChanged.addListener(handleStorageChange)
 

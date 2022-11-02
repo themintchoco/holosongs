@@ -1,6 +1,8 @@
-import type { LanguageDetectorAsyncModule } from 'i18next'
+/* eslint-disable */
 
-const ExtensionLanguageDetect : () => LanguageDetectorAsyncModule = () => {
+import type { LanguageDetectorAsyncModule, Services } from 'i18next'
+
+const ExtensionLanguageDetect : () => LanguageDetectorAsyncModule & { services?: Services } = () => {
   return {
     type: 'languageDetector',
     async: true,
@@ -11,7 +13,7 @@ const ExtensionLanguageDetect : () => LanguageDetectorAsyncModule = () => {
       const { language } = await chrome.storage.local.get('language')
       if (language) return callback(language)
   
-      callback(this.services.languageUtils.getBestMatchFromCodes(await chrome.i18n.getAcceptLanguages()))
+      callback(this.services?.languageUtils.getBestMatchFromCodes(await chrome.i18n.getAcceptLanguages()))
     },
     async cacheUserLanguage(language) {
       await chrome.storage.local.set({ language })

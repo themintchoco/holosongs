@@ -9,7 +9,7 @@ export interface SongItemProps {
 const SongItem = ({ song, onSelectSong } : SongItemProps) => {
   return (
     <div className={styles.songItem} onClick={() => onSelectSong?.(song)}>
-      <div className={styles.art} style={{background: `var(--yt-spec-10-percent-layer) center/cover url('${song.art}')`}}></div>
+      <div className={styles.art} style={{background: 'var(--yt-spec-10-percent-layer)' + (song.art ? ` center/cover url('${song.art}')` : '')}}></div>
       <div className={styles.details}>
         <h3>{song.name}</h3>
         <h4 className={styles.secondary}>{song.original_artist}</h4>
