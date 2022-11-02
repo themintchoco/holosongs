@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import { Trans, useTranslation } from 'react-i18next'
 import { useForm, Controller } from 'react-hook-form'

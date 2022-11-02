@@ -5,7 +5,7 @@ const theme = {
     initialColorMode: 'light',
     useSystemColorMode: true,
   },
-  
+
   styles: {
     global: {
       body: {
