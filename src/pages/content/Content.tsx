@@ -53,7 +53,7 @@ const Content = ({ player, videoId, songsPanelContainer, dexLinkContainer } : Co
         'X-APIKEY': apiKey,
       }
     }).then((r) => r.json())
-      .then((data) => {
+      .then((data: { songs: Song[] }[]) => {
         if (data.length <= 0 || !data[0].songs) throw new Error()
         setSongs(data[0].songs.sort((a, b) => { return a.start - b.start }))
       })
@@ -79,9 +79,9 @@ const Content = ({ player, videoId, songsPanelContainer, dexLinkContainer } : Co
         break
       }
     }
-    
+
     if (!currentSong || currentTime < currentSong.start || currentTime > currentSong.end) {
-      let nextSong: Song = null
+      let nextSong: Song | null = null
 
       for (const song of songs) {
         if (song.start <= currentTime && currentTime <= song.end) {
@@ -103,12 +103,16 @@ const Content = ({ player, videoId, songsPanelContainer, dexLinkContainer } : Co
     for (const song of songs) {
       if (currentTime < song.start) return song
     }
+
+    return null
   }
 
   const getPrevSong = () => {
     for (const song of songs.slice().reverse()) {
       if (currentTime > song.end) return song
     }
+
+    return null
   }
 
   const handleSelectSong = (song: Song) => {
@@ -158,6 +162,8 @@ const Content = ({ player, videoId, songsPanelContainer, dexLinkContainer } : Co
   }
 
   const handleClickDexLink = () => {
+    if (!videoId) return
+
     const url = new URL(`https://holodex.net/watch/${videoId}`)
     url.searchParams.set('t', Math.floor(currentTime).toString())
     window.location.href = url.toString()

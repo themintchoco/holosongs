@@ -6,5 +6,5 @@ export const messageOne = async (tabId: number, message: BrowserMessage) => {
 
 export const messageAll = async (message: BrowserMessage) => {
   const tabs = await chrome.tabs.query({ url: '<all_urls>' })
-  return Promise.allSettled(tabs.map(tab => chrome.tabs.sendMessage(tab.id, message)))
+  return Promise.allSettled(tabs.map(tab => tab.id !== undefined && chrome.tabs.sendMessage(tab.id, message)))
 }

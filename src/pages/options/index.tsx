@@ -7,7 +7,7 @@ import './index.scss'
 import theme from './theme'
 import Options from './Options'
 
-(async () => {
+(() => {
   const app = document.querySelector('#app')
   if (!app) return
 
@@ -17,5 +17,5 @@ import Options from './Options'
     <ChakraProvider theme={theme}>
       <Options />
     </ChakraProvider>
-  ) 
+  )
 })()

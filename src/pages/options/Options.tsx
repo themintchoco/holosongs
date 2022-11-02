@@ -5,6 +5,8 @@ import { useForm, Controller } from 'react-hook-form'
 import { MdLaunch } from 'react-icons/md'
 import {
   Button,
+  Center,
+  CircularProgress,
   Divider,
   Flex,
   FormControl,
@@ -68,17 +70,17 @@ const Options = () => {
       if (r.status >= 400) throw new Error(t('apiKey.errors.invalidKey'))
 
       return true
-    }).catch((e) => {
+    }).catch((e: Error) => {
       return e.message ?? t('apiKey.errors.serverError')
     })
   }
 
   const handleLanguageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     await i18n.changeLanguage(e.target.value)
-    messageAll({ type: BrowserMessageType.languageChanged })
+    void messageAll({ type: BrowserMessageType.languageChanged })
   }
 
-  const onSubmit = async (newPrefs: typeof prefs) => {
+  const onSubmit = (newPrefs: typeof prefs) => {
     setApiKey(newPrefs.apiKey)
     setShowDexButton(newPrefs.showDexButton)
     setShowSongControls(newPrefs.showSongControls)
@@ -90,14 +92,18 @@ const Options = () => {
     })
   }
 
-  return (
+  return Object.values(prefs).some((v) => v === undefined) ? (
+    <Center>
+      <CircularProgress isIndeterminate />
+    </Center>
+  ) : (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FormControl isInvalid={!!errors.apiKey} isRequired>
         <FormLabel htmlFor='apiKey'>{t('apiKey.label')}</FormLabel>
         <Input id='apiKey' type='text' {...register('apiKey', {
           required: t('apiKey.errors.required'),
-          setValueAs: (v) => v.trim(),
-          validate: validateApiKey,
+          setValueAs: (v: string) => v.trim(),
+          validate: (v: string | undefined) => v === undefined ? false : validateApiKey(v),
         })} />
         <FormErrorMessage>
           { errors.apiKey?.message }

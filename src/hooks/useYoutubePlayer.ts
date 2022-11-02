@@ -22,7 +22,7 @@ const useYoutubePlayer = (player: HTMLElement) => {
   const handleDurationChange = () => {
     setPlayingAd(!!player.querySelector('.ytp-ad-player-overlay'))
   }
-  
+
   useEffect(() => {
     const newVideo = player.querySelector('video')
     if (newVideo) {

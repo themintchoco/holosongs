@@ -4,7 +4,7 @@ import { initReactI18next } from 'react-i18next'
 import ExtensionLanguageDetect from './ExtensionLanguageDetect'
 import ExtensionBackend from './ExtensionBackend'
 
-i18n
+void i18n
   .use(ExtensionLanguageDetect())
   .use(ExtensionBackend())
   .use(initReactI18next)
