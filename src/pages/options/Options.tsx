@@ -4,9 +4,6 @@ import { Trans, useTranslation } from 'react-i18next'
 import { useForm, Controller } from 'react-hook-form'
 import { MdCheck, MdLaunch } from 'react-icons/md'
 import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
   Button,
   Center,
   CircularProgress,
@@ -29,6 +26,7 @@ import {
   Switch,
   Tooltip,
   VStack,
+  useToast,
 } from '@chakra-ui/react'
 
 import useStorage from '../../hooks/useStorage'
@@ -39,9 +37,10 @@ import { messageAll } from '../../common/utils/message'
 
 const Options = () => {
   const [t, i18n] = useTranslation('options')
-  const [showAlert, setShowAlert] = useState(false)
   const [updatedWhitelist, setUpdatedWhitelist] = useState(false)
   const [shouldAutomaticallyUpdateWhitelist, setShouldAutomaticallyUpdateWhitelist] = useState(true)
+
+  const toast = useToast()
 
   const [apiKey, setApiKey] = useStorage('apiKey', '')
   const [showDexButton, setShowDexButton] = useStorage('showDexButton', true)
@@ -119,7 +118,11 @@ const Options = () => {
       void chrome.alarms.clear('whitelist-updater')
     }
 
-    setShowAlert(true)
+    toast({
+      title: t('savedChanges'),
+      status: 'success',
+      isClosable: true,
+    })
   }
 
   if (
@@ -141,15 +144,6 @@ const Options = () => {
     </Center>
   ) : (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {
-        showAlert && (
-          <Alert status='success' variant='left-accent' mb={2}>
-            <AlertIcon />
-            <AlertTitle>{t('savedChanges')}</AlertTitle>
-          </Alert>
-        )
-      }
-
       <FormControl isInvalid={!!errors.apiKey} isRequired>
         <FormLabel htmlFor='apiKey'>{t('apiKey.label')}</FormLabel>
         <Input id='apiKey' type='text' {...register('apiKey', {
