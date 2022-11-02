@@ -1,12 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import { Trans, useTranslation } from 'react-i18next'
 import { useForm, Controller } from 'react-hook-form'
 import { MdLaunch } from 'react-icons/md'
 import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
   Button,
   Center,
   CircularProgress,
@@ -24,6 +21,7 @@ import {
   Switch,
   Tooltip,
   VStack,
+  useToast,
 } from '@chakra-ui/react'
 
 import useStorage from '../../hooks/useStorage'
@@ -32,7 +30,7 @@ import { messageAll } from '../../common/utils/message'
 
 const Options = () => {
   const [t, i18n] = useTranslation('options')
-  const [showAlert, setShowAlert] = useState(false)
+  const toast = useToast()
 
   const [apiKey, setApiKey] = useStorage('apiKey', '')
   const [showDexButton, setShowDexButton] = useStorage('showDexButton', true)
@@ -87,7 +85,11 @@ const Options = () => {
     setShowDexButton(newPrefs.showDexButton)
     setShowSongControls(newPrefs.showSongControls)
 
-    setShowAlert(true)
+    toast({
+      title: t('savedChanges'),
+      status: 'success',
+      isClosable: true,
+    })
   }
 
   return Object.values(prefs).some((v) => v === undefined) ? (
@@ -96,15 +98,6 @@ const Options = () => {
     </Center>
   ) : (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {
-        showAlert && (
-          <Alert status='success' variant='left-accent' mb='1em'>
-            <AlertIcon />
-            <AlertTitle>{t('savedChanges')}</AlertTitle>
-          </Alert>
-        )
-      }
-
       <FormControl isInvalid={!!errors.apiKey} isRequired>
         <FormLabel htmlFor='apiKey'>{t('apiKey.label')}</FormLabel>
         <Input id='apiKey' type='text' {...register('apiKey', {

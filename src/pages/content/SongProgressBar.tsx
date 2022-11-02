@@ -34,7 +34,7 @@ const SongProgressBar = ({ song, progress, onSeek } : SongProgressBarProps) => {
   return (
     <div className={styles.container}>
       { song && <span>{ format((progress ?? 0) * 1000) }</span> }
-      
+
       <div
         className={styles.barOuter}
         onMouseDown={handleSeekSong}
