@@ -8,11 +8,11 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
 })
 
 chrome.runtime.onUpdateAvailable.addListener(({ version }) => {
-  messageAll({ type: BrowserMessageType.updateAvailable, version })
+  void messageAll({ type: BrowserMessageType.updateAvailable, version })
 })
 
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
+chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if (changeInfo.status) {
-    messageOne(tabId, { type: BrowserMessageType.tabStatusChange, status: changeInfo.status })
+    void messageOne(tabId, { type: BrowserMessageType.tabStatusChange, status: changeInfo.status })
   }
 })

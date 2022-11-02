@@ -9,12 +9,14 @@ const useChannelWhitelist = () => {
   const [isWhitelistUpdating, setIsWhitelistUpdating] = useState(false)
 
   const isWhitelisted = (channelId: string) => {
-    return channelId in whitelist
+    return whitelist ? channelId in whitelist : false
   }
 
   const updateWhitelist = async () => {
+    if (!apiKey) return false
+
     setIsWhitelistUpdating(true)
-    const newWhitelist = {}
+    const newWhitelist: Record<string, boolean> = {}
 
     let offset = 0
     const limit = 100
@@ -25,7 +27,7 @@ const useChannelWhitelist = () => {
         headers: {
           'X-APIKEY': apiKey
         }
-      })).json()
+      })).json() as { id: string }[]
       if (!channels.length) break
 
       for (const { id } of channels) newWhitelist[id] = true
@@ -35,6 +37,8 @@ const useChannelWhitelist = () => {
     setWhitelist(newWhitelist)
     setLastUpdated((new Date()).getTime())
     setIsWhitelistUpdating(false)
+
+    return true
   }
 
   const whitelistLastUpdated = lastUpdated && new Date(lastUpdated)
