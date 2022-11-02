@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 const useStorage = <T>(key: string, defaultValue?: T) : [T | undefined, (newValue: T | undefined) => void] => {
-  const [value, setValue] = useState<T | undefined>(undefined)
+  const [value, setValue] = useState<T>()
 
   const storageArea = chrome.storage.local
 
