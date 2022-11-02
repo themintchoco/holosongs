@@ -33,6 +33,7 @@ import {
 
 import useStorage from '../../hooks/useStorage'
 import useChannelWhitelist from '../../hooks/useChannelWhitelist'
+import { WHITELIST_UPDATE_INTERVAL } from '../../common/utils/channel-whitelist'
 import { BrowserMessageType } from '../../common/types/BrowserMessage'
 import { messageAll } from '../../common/utils/message'
 
@@ -40,6 +41,7 @@ const Options = () => {
   const [t, i18n] = useTranslation('options')
   const [showAlert, setShowAlert] = useState(false)
   const [updatedWhitelist, setUpdatedWhitelist] = useState(false)
+  const [shouldAutomaticallyUpdateWhitelist, setShouldAutomaticallyUpdateWhitelist] = useState(true)
 
   const [apiKey, setApiKey] = useStorage('apiKey', '')
   const [showDexButton, setShowDexButton] = useStorage('showDexButton', true)
@@ -95,8 +97,7 @@ const Options = () => {
   }
 
   const handleUpdateWhitelist = async () => {
-    await updateWhitelist()
-    setUpdatedWhitelist(true)
+    setUpdatedWhitelist(await updateWhitelist())
   }
 
   const handleLanguageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -110,7 +111,28 @@ const Options = () => {
     setShowSongControls(newPrefs.showSongControls)
     setEnableWhitelist(newPrefs.enableWhitelist)
 
+    if (newPrefs.enableWhitelist) {
+      chrome.alarms.create('whitelist-updater', {
+        periodInMinutes: WHITELIST_UPDATE_INTERVAL,
+      })
+    } else {
+      void chrome.alarms.clear('whitelist-updater')
+    }
+
     setShowAlert(true)
+  }
+
+  if (
+    shouldAutomaticallyUpdateWhitelist &&
+    watchEnableWhitelist &&
+    !isWhitelistUpdating &&
+    whitelistLastUpdated !== undefined && (
+      whitelistLastUpdated === null ||
+      Date.now() - whitelistLastUpdated.getTime() > WHITELIST_UPDATE_INTERVAL * 60 * 1000
+    )
+  ) {
+    setShouldAutomaticallyUpdateWhitelist(false)
+    void handleUpdateWhitelist()
   }
 
   return Object.values(prefs).some((v) => v === undefined) ? (
