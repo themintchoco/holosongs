@@ -9,7 +9,7 @@
     "label": "API Key"
   },
   "enableWhitelist": {
-    "helper": "Only query the API when watching channels tracked by Holodex. This requires maintaining a local list of channels which must be updated from time to time (for example, after a debut).",
+    "helper": "Only query the API when watching channels tracked by Holodex. ",
     "label": "Limit API requests"
   },
   "savedChanges": "Your changes were saved",
