@@ -1,10 +1,22 @@
+import { Mutex, tryAcquire } from 'async-mutex'
+
 export const WHITELIST_UPDATE_INTERVAL = 60 * 24 * 7 // 1 week
 
-export const updateWhitelist = async () => {
-  const { apiKey, whitelistUpdating } = await chrome.storage.local.get(['apiKey', 'whitelistUpdating'])
-  if (!apiKey || whitelistUpdating) return false
+const mutex = new Mutex()
 
-  await chrome.storage.local.set({ whitelistUpdating: true })
+export const updateWhitelist = async () => {
+  try {
+    await tryAcquire(mutex).runExclusive(async () => {
+      const { whitelistUpdating } = await chrome.storage.local.get('whitelistUpdating')
+      if (whitelistUpdating) throw new Error('Whitelist is already updating')
+
+      await chrome.storage.local.set({ whitelistUpdating: true })
+    })
+  } catch {
+    return false
+  }
+
+  const { apiKey } = await chrome.storage.local.get('apiKey')
 
   const whitelist: Record<string, boolean> = {}
 
