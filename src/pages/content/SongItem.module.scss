@@ -24,4 +24,12 @@
       color: var(--yt-spec-text-secondary);
     }
   }
+
+  &.active {
+    background-color: var(--yt-spec-10-percent-layer);
+
+    .art {
+      outline: 2px solid var(--yt-spec-themed-blue);
+    }
+  }
 }
