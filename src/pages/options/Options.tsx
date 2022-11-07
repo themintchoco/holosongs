@@ -1,12 +1,13 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Trans, useTranslation } from 'react-i18next'
 import { useForm, Controller } from 'react-hook-form'
-import { MdLaunch } from 'react-icons/md'
+import { MdCheck, MdLaunch } from 'react-icons/md'
 import {
   Button,
   Center,
   CircularProgress,
+  Collapse,
   Divider,
   Flex,
   FormControl,
@@ -18,6 +19,10 @@ import {
   Link,
   Select,
   Spacer,
+  Stat,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
   Switch,
   Tooltip,
   VStack,
@@ -25,24 +30,33 @@ import {
 } from '@chakra-ui/react'
 
 import useStorage from '../../hooks/useStorage'
+import useChannelWhitelist from '../../hooks/useChannelWhitelist'
+import { WHITELIST_UPDATE_INTERVAL } from '../../common/utils/channel-whitelist'
 import { BrowserMessageType } from '../../common/types/BrowserMessage'
 import { messageAll } from '../../common/utils/message'
 
 const Options = () => {
   const [t, i18n] = useTranslation('options')
+  const [updatedWhitelist, setUpdatedWhitelist] = useState(false)
+  const [shouldAutomaticallyUpdateWhitelist, setShouldAutomaticallyUpdateWhitelist] = useState(true)
+
   const toast = useToast()
 
   const [apiKey, setApiKey] = useStorage('apiKey', '')
   const [showDexButton, setShowDexButton] = useStorage('showDexButton', true)
   const [showSongControls, setShowSongControls] = useStorage('showSongControls', true)
+  const [enableWhitelist, setEnableWhitelist] = useStorage('enableWhitelist', false)
 
-  const prefs = { apiKey, showDexButton, showSongControls }
+  const { whitelist, updateWhitelist, whitelistLastUpdated, isWhitelistUpdating } = useChannelWhitelist()
+
+  const prefs = { apiKey, showDexButton, showSongControls, enableWhitelist }
 
   const {
     handleSubmit,
     register,
     reset,
     control,
+    watch,
     formState: {
       isDirty,
       dirtyFields,
@@ -53,6 +67,12 @@ const Options = () => {
     defaultValues: prefs,
     reValidateMode: 'onSubmit',
   })
+
+  const watchEnableWhitelist = watch('enableWhitelist')
+
+  const whitelistLength = useMemo(() => {
+    return whitelist ? Object.keys(whitelist).length : 0
+  }, [whitelist])
 
   useEffect(() => {
     reset(prefs)
@@ -75,6 +95,10 @@ const Options = () => {
     })
   }
 
+  const handleUpdateWhitelist = async () => {
+    setUpdatedWhitelist(await updateWhitelist())
+  }
+
   const handleLanguageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     await i18n.changeLanguage(e.target.value)
     void messageAll({ type: BrowserMessageType.languageChanged })
@@ -84,12 +108,34 @@ const Options = () => {
     setApiKey(newPrefs.apiKey)
     setShowDexButton(newPrefs.showDexButton)
     setShowSongControls(newPrefs.showSongControls)
+    setEnableWhitelist(newPrefs.enableWhitelist)
+
+    if (newPrefs.enableWhitelist) {
+      chrome.alarms.create('whitelist-updater', {
+        periodInMinutes: WHITELIST_UPDATE_INTERVAL,
+      })
+    } else {
+      void chrome.alarms.clear('whitelist-updater')
+    }
 
     toast({
       title: t('savedChanges'),
       status: 'success',
       isClosable: true,
     })
+  }
+
+  if (
+    shouldAutomaticallyUpdateWhitelist &&
+    watchEnableWhitelist &&
+    !isWhitelistUpdating &&
+    whitelistLastUpdated !== undefined && (
+      whitelistLastUpdated === null ||
+      Date.now() - whitelistLastUpdated.getTime() > WHITELIST_UPDATE_INTERVAL * 60 * 1000
+    )
+  ) {
+    setShouldAutomaticallyUpdateWhitelist(false)
+    void handleUpdateWhitelist()
   }
 
   return Object.values(prefs).some((v) => v === undefined) ? (
@@ -118,9 +164,9 @@ const Options = () => {
         </FormHelperText>
       </FormControl>
 
-      <Divider my='2em' />
+      <Divider my={4} />
 
-      <VStack spacing='1.5em'>
+      <VStack spacing={3}>
         <FormControl>
           <Flex>
             <FormLabel htmlFor='showSongControls'>{t('showSongControls.label')}</FormLabel>
@@ -150,9 +196,68 @@ const Options = () => {
         </FormControl>
       </VStack>
 
-      <Divider my='2em' />
+      <Divider my={4} />
 
-      <Flex>
+      <VStack spacing={3} align='stretch'>
+        <FormControl>
+          <Flex>
+            <FormLabel htmlFor='enableWhitelist'>{t('enableWhitelist.label')}</FormLabel>
+            <Spacer />
+            <Controller
+              name='enableWhitelist'
+              control={control}
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                <Switch id='enableWhitelist' onChange={onChange} onBlur={onBlur} isChecked={value} name={name} ref={ref} />
+              )}
+            />
+          </Flex>
+          <FormHelperText>
+            { t('enableWhitelist.helper') }
+          </FormHelperText>
+        </FormControl>
+
+        <Flex style={{marginInline: '-20px'}}>
+          <Collapse
+            in={watchEnableWhitelist}
+            style={{flexGrow: 1}}>
+            <VStack align='stretch'>
+              <Stat px='20px'>
+                <StatLabel>{t('whitelistStat.label')}</StatLabel>
+                <StatNumber>{t('whitelistStat.length', { length: whitelistLength })}</StatNumber>
+                <StatHelpText>
+                  { whitelistLastUpdated ? t('whitelistStat.lastUpdated', { whitelistLastUpdated }) : t('whitelistStat.lastUpdatedNever')}
+                </StatHelpText>
+              </Stat>
+
+              <Button
+                colorScheme='blue'
+                variant='ghost'
+                px='20px'
+                borderRadius={0}
+                justifyContent='space-between'
+                isLoading={isWhitelistUpdating}
+                isDisabled={updatedWhitelist}
+                spinnerPlacement='end'
+                rightIcon={updatedWhitelist ? <MdCheck /> : undefined}
+                loadingText={t('updateChannels.title.loading')}
+                onClick={handleUpdateWhitelist}>
+                { updatedWhitelist ? t('updateChannels.title.success') : t('updateChannels.title.default') }
+              </Button>
+            </VStack>
+          </Collapse>
+        </Flex>
+      </VStack>
+
+      <Flex
+        mt={4}
+        py={4}
+        mx='-20px'
+        px='20px'
+        position='sticky'
+        bottom={0}
+        bgColor='Background'
+        borderTop='1px'
+        borderColor='inherit'>
         <Select variant='filled' onChange={handleLanguageChange} defaultValue={i18n.language} display='inline-block' width='auto'>
           <option value='en-US'>English</option>
           <option value='ja-JP'>日本語</option>

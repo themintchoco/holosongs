@@ -8,6 +8,10 @@
     "helper": "您可以从 <1>账号设置<1></1></1> 获取您的API密钥",
     "label": "API密钥"
   },
+  "enableWhitelist": {
+    "helper": "将API访问限制为受Holodex跟踪的频道。",
+    "label": "限制API访问"
+  },
   "savedChanges": "更改已成功保存",
   "showDexButton": {
     "label": "显示 Holodex 链接"
@@ -18,5 +22,18 @@
   "submit": {
     "noChanges": "没有更改可保存",
     "title": "保存"
+  },
+  "updateChannels": {
+    "title": {
+      "default": "更新频道列表",
+      "loading": "更新中...",
+      "success": "更新成功"
+    }
+  },
+  "whitelistStat": {
+    "label": "频道",
+    "lastUpdated": "{{lastUpdated, datetime(dateStyle: medium)}} 最后更新",
+    "lastUpdatedNever": "没更新过",
+    "length": "{{length, number}}"
   }
 }

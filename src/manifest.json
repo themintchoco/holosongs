@@ -3,6 +3,7 @@
   "name": "Youtube-Holodex",
 
   "permissions": [
+    "alarms",
     "storage"
   ],
   

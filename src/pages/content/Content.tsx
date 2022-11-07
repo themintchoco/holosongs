@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 
 import useStorage from '../../hooks/useStorage'
 import useYoutubePlayer from '../../hooks/useYoutubePlayer'
+import useChannelWhitelist from '../../hooks/useChannelWhitelist'
 import SongsPanel from './SongsPanel'
 import DexLink from './DexLink'
 
@@ -30,14 +31,17 @@ export interface Song {
 export interface ContentProps {
   player: HTMLElement,
   videoId: string | null,
+  channelId: string | null,
   songsPanelContainer: HTMLElement,
   dexLinkContainer: HTMLElement,
 }
 
-const Content = ({ player, videoId, songsPanelContainer, dexLinkContainer } : ContentProps) => {
+const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkContainer } : ContentProps) => {
   const [apiKey] = useStorage<string>('apiKey')
   const [showDexButton] = useStorage('showDexButton', true)
+  const [enableWhitelist] = useStorage('enableWhitelist', false)
 
+  const { isWhitelisted } = useChannelWhitelist()
   const { video, paused, currentTime, playingAd } = useYoutubePlayer(player)
 
   const [songs, setSongs] = useState<Song[]>([])
@@ -46,7 +50,7 @@ const Content = ({ player, videoId, songsPanelContainer, dexLinkContainer } : Co
   const [musicMode, setMusicMode] = useState(MusicMode.Off)
 
   useEffect(() => {
-    if (!videoId || !apiKey) return setSongs([])
+    if (!videoId || !apiKey || !channelId || (enableWhitelist && !isWhitelisted(channelId))) return setSongs([])
 
     fetch(`https://holodex.net/api/v2/videos?id=${videoId}&include=songs`, {
       headers: {
@@ -60,7 +64,7 @@ const Content = ({ player, videoId, songsPanelContainer, dexLinkContainer } : Co
       .catch(() => {
         setSongs([])
       })
-  }, [videoId, apiKey])
+  }, [videoId, apiKey, channelId])
 
   useEffect(() => {
     setCurrentSong(null)

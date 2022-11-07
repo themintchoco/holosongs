@@ -8,6 +8,10 @@
     "helper": "APIキーは <1>アカウント設定<1></1></1> から取得してください",
     "label": "APIキー"
   },
+  "enableWhitelist": {
+    "helper": "Holodexに登録されているチャンネルを視聴している場合だけAPIを呼び出す。",
+    "label": "APIリクエストを制限する"
+  },
   "savedChanges": "変更の保存に成功しました",
   "showDexButton": {
     "label": "Holodex ボタンを表示する"
@@ -18,5 +22,18 @@
   "submit": {
     "noChanges": "変更なし",
     "title": "保存"
+  },
+  "updateChannels": {
+    "title": {
+      "default": "チャンネルリストを更新",
+      "loading": "更新中...",
+      "success": "リストを更新しました"
+    }
+  },
+  "whitelistStat": {
+    "label": "チャンネル",
+    "lastUpdated": "{{lastUpdated, datetime(dateStyle: medium)}} 最終更新",
+    "lastUpdatedNever": "更新されていない",
+    "length": "{{length, number}}"
   }
 }
