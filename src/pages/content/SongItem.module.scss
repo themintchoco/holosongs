@@ -11,6 +11,7 @@
     width: 50px;
     height: 50px;
     flex-shrink: 0;
+    border-radius: 8px;
   }
 
   .details {
@@ -21,6 +22,14 @@
 
     .secondary {
       color: var(--yt-spec-text-secondary);
+    }
+  }
+
+  &.active {
+    background-color: var(--yt-spec-10-percent-layer);
+
+    .art {
+      outline: 2px solid var(--yt-spec-themed-blue);
     }
   }
 }
