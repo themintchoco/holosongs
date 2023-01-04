@@ -4,6 +4,7 @@
     "target": "es2015",
     "module": "esnext",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "noEmit": true,
     "jsx": "react-jsx"
