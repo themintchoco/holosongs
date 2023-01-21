@@ -9,11 +9,11 @@ const ExtensionLanguageDetect : () => LanguageDetectorAsyncModule & { services?:
     init(services) {
       this.services = services
     },
-    async detect(callback) {
+    async detect() {
       const { language } = await chrome.storage.local.get('language')
-      if (language) return callback(language)
+      if (language) return language
   
-      callback(this.services?.languageUtils.getBestMatchFromCodes(await chrome.i18n.getAcceptLanguages()))
+      return this.services?.languageUtils.getBestMatchFromCodes(await chrome.i18n.getAcceptLanguages())
     },
     async cacheUserLanguage(language) {
       await chrome.storage.local.set({ language })
