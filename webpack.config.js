@@ -20,7 +20,7 @@ const config = {
     background: path.join(__dirname, 'src', 'pages', 'background', 'index.ts'),
     options: path.join(__dirname, 'src', 'pages', 'options', 'index.tsx'),
   },
-  
+
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name].js',
@@ -28,7 +28,7 @@ const config = {
       dynamicImport: true,
     }
   },
-  
+
   module: {
     rules: [
       {
@@ -58,7 +58,7 @@ const config = {
           },
         ],
       },
-      
+
       {
         test: /\.scss$/,
         include: [
@@ -111,10 +111,10 @@ const config = {
           'html-loader',
         ],
       },
-      
+
     ],
   },
-  
+
   plugins: [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
@@ -128,6 +128,9 @@ const config = {
               description: packageJson.description
             }, null, 2)
           }
+        },
+        {
+          from: path.join(__dirname, 'icons'),
         },
       ],
     }),
