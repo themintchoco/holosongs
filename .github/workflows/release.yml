@@ -23,9 +23,11 @@ jobs:
       - name: "Build"
         run: npm run build
 
+      - run: zip -r dist.zip dist/
+
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           files: |
-            dist/
+            dist.zip
