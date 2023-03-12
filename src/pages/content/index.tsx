@@ -45,6 +45,7 @@ chrome.runtime.onMessage.addListener(async (message: BrowserMessage, sender) => 
   switch (message.type) {
   case BrowserMessageType.tabStatusChange:
     if (message.status !== 'complete' || videoId === newVideoId) return
+    videoId = newVideoId
     break
   case BrowserMessageType.languageChanged:
     void i18n.changeLanguage()
@@ -52,6 +53,9 @@ chrome.runtime.onMessage.addListener(async (message: BrowserMessage, sender) => 
   default:
     return
   }
+
+  root.render(<></>)
+  if (!videoId) return
 
   const player = await ensureSelector('.ytd-player') as HTMLElement
   const channelId = await getChannelId()
@@ -65,6 +69,4 @@ chrome.runtime.onMessage.addListener(async (message: BrowserMessage, sender) => 
       dexLinkContainer={linkContainer}
     />
   )
-
-  videoId = newVideoId
 })
