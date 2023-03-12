@@ -132,6 +132,10 @@ const config = {
         {
           from: path.join(__dirname, 'icons'),
         },
+        {
+          from: path.join(__dirname, 'src', 'assets'),
+          to: 'assets',
+        },
       ],
     }),
     new HtmlWebpackPlugin({
