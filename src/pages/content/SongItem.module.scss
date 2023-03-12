@@ -12,6 +12,15 @@
     height: 50px;
     flex-shrink: 0;
     border-radius: 8px;
+    background-color: var(--yt-spec-10-percent-layer);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    &.placeholder {
+      background-size: 65%;
+      filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+    }
   }
 
   .details {
