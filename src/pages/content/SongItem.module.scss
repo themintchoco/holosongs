@@ -24,12 +24,14 @@
   }
 
   .details {
-    display: inline-flex;
-    flex-direction: column;
     margin-left: 1em;
     color: var(--yt-spec-text-primary);
 
     .secondary {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
       color: var(--yt-spec-text-secondary);
     }
   }
