@@ -18,8 +18,10 @@ export const YoutubePanelHeader = ({ title } : YoutubePanelHeaderProps) => {
 
 export const YoutubePanelListContent = ({ children } : React.PropsWithChildren) => {
   return (
-    <div className={cx(styles.listContent, 'ytd-engagement-panel-section-list-renderer')} id='content'>
-      { children }
+    <div className='ytd-engagement-panel-section-list-renderer' id='content'>
+      <div className={cx(styles.listContent, 'ytd-macro-markers-list-renderer')} id='contents'>
+        { children }
+      </div>
     </div>
   )
 }
