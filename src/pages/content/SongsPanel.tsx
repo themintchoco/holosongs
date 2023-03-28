@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { useTranslation } from 'react-i18next'
 
 import useStorage from '../../hooks/useStorage'
@@ -42,38 +44,53 @@ const SongsPanel = ({
 }: SongsPanelProps) => {
   const { t } = useTranslation('content')
   const [showSongControls] = useStorage('showSongControls', true)
+  const [isCollapsed, setCollapsed] = useState(false)
+
+  const handleToggleCollapsed = () => {
+    setCollapsed((isCollapsed) => !isCollapsed)
+  }
 
   return (
     <YoutubePanel>
-      <YoutubePanelHeader title={t('songsPanel.header.title')} />
-      <YoutubePanelListContent>
-        {
-          songs.map((song) => (
-            <SongItem key={song.id} song={song} active={song.id === currentSong?.id} onSelectSong={onSelectSong} />
-          ))
-        }
-      </YoutubePanelListContent>
+      <YoutubePanelHeader
+        title={t('songsPanel.header.title')}
+        isCollapsed={isCollapsed}
+        onToggleCollapsed={handleToggleCollapsed}
+      />
       {
-        showSongControls && (
-          <YoutubePanelFooter>
-            <SongControls
-              song={currentSong}
-              playing={playing}
-              repeatMode={repeatMode}
-              musicMode={musicMode}
-              onPlay={onPlay}
-              onPause={onPause}
-              onSkipForward={onSkipForward}
-              onSkipBackward={onSkipBackward}
-              onToggleRepeatMode={onToggleRepeatMode}
-              onToggleMusicMode={onToggleMusicMode}
-            />
-            <SongProgressBar
-              song={currentSong}
-              progress={currentSongProgress}
-              onSeek={onSeek}
-            />
-          </YoutubePanelFooter>
+        !isCollapsed && (
+          <>
+            <YoutubePanelListContent>
+              {
+                songs.map((song) => (
+                  <SongItem key={song.id} song={song} active={song.id === currentSong?.id} onSelectSong={onSelectSong} />
+                ))
+              }
+            </YoutubePanelListContent>
+            {
+              showSongControls && (
+                <YoutubePanelFooter>
+                  <SongControls
+                    song={currentSong}
+                    playing={playing}
+                    repeatMode={repeatMode}
+                    musicMode={musicMode}
+                    onPlay={onPlay}
+                    onPause={onPause}
+                    onSkipForward={onSkipForward}
+                    onSkipBackward={onSkipBackward}
+                    onToggleRepeatMode={onToggleRepeatMode}
+                    onToggleMusicMode={onToggleMusicMode}
+                  />
+                  <SongProgressBar
+                    song={currentSong}
+                    progress={currentSongProgress}
+                    onSeek={onSeek}
+                  />
+                </YoutubePanelFooter>
+              )
+            }
+          </>
         )
       }
     </YoutubePanel>

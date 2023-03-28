@@ -5,8 +5,13 @@
   border-radius: 12px;
   overflow: hidden;
 
+  .collapse-btn {
+    margin: 0 1em;
+    cursor: pointer;
+  }
+
   .list-content {
-    max-height: 50vh;
+    max-height: 40vh;
   }
 
   .footer {
