@@ -16,6 +16,7 @@ export interface SongsPanelProps {
   playing: boolean,
   repeatMode: RepeatMode,
   musicMode: MusicMode,
+  collapsed: boolean,
   onSelectSong?: (song: Song) => void,
   onPlay?: () => void,
   onPause?: () => void,
@@ -24,6 +25,7 @@ export interface SongsPanelProps {
   onSeek?: (t: number) => void,
   onToggleRepeatMode?: () => void,
   onToggleMusicMode?: () => void,
+  onToggleCollapsed?: () => void,
 }
 
 const SongsPanel = ({
@@ -33,6 +35,7 @@ const SongsPanel = ({
   playing,
   repeatMode,
   musicMode,
+  collapsed,
   onSelectSong,
   onPlay,
   onPause,
@@ -41,24 +44,20 @@ const SongsPanel = ({
   onSeek,
   onToggleRepeatMode,
   onToggleMusicMode,
+  onToggleCollapsed,
 }: SongsPanelProps) => {
   const { t } = useTranslation('content')
   const [showSongControls] = useStorage('showSongControls', true)
-  const [isCollapsed, setCollapsed] = useState(false)
-
-  const handleToggleCollapsed = () => {
-    setCollapsed((isCollapsed) => !isCollapsed)
-  }
 
   return (
     <YoutubePanel>
       <YoutubePanelHeader
         title={t('songsPanel.header.title')}
-        isCollapsed={isCollapsed}
-        onToggleCollapsed={handleToggleCollapsed}
+        isCollapsed={collapsed}
+        onToggleCollapsed={onToggleCollapsed}
       />
       {
-        !isCollapsed && (
+        !collapsed && (
           <>
             <YoutubePanelListContent>
               {
