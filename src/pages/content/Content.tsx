@@ -48,6 +48,7 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
   const [currentSong, setCurrentSong] = useState<Song | null>(null)
   const [repeatMode, setRepeatMode] = useState(RepeatMode.Off)
   const [musicMode, setMusicMode] = useState(MusicMode.Off)
+  const [songsPanelCollapsed, setSongsPanelCollapsed] = useState(false)
 
   useEffect(() => {
     if (!videoId || !apiKey || !channelId || (enableWhitelist && !isWhitelisted(channelId))) return setSongs([])
@@ -141,28 +142,31 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
   }
 
   const handleToggleRepeatMode = () => {
-    switch (repeatMode) {
-    case RepeatMode.Off:
-      setRepeatMode(RepeatMode.On)
-      break
-    case RepeatMode.On:
-      setRepeatMode(RepeatMode.One)
-      break
-    case RepeatMode.One:
-      setRepeatMode(RepeatMode.Off)
-      break
-    }
+    setRepeatMode((repeatMode) => {
+      switch (repeatMode) {
+      case RepeatMode.Off:
+        return RepeatMode.On
+      case RepeatMode.On:
+        return RepeatMode.One
+      case RepeatMode.One:
+        return RepeatMode.Off
+      }
+    })
   }
 
   const handleToggleMusicMode = () => {
-    switch (musicMode) {
-    case MusicMode.Off:
-      setMusicMode(MusicMode.On)
-      break
-    case MusicMode.On:
-      setMusicMode(MusicMode.Off)
-      break
-    }
+    setMusicMode((musicMode) => {
+      switch (musicMode) {
+      case MusicMode.Off:
+        return MusicMode.On
+      case MusicMode.On:
+        return MusicMode.Off
+      }
+    })
+  }
+
+  const handleToggleSongsPanelCollapsed = () => {
+    setSongsPanelCollapsed((collapsed) => !collapsed)
   }
 
   const handleClickDexLink = () => {
@@ -184,6 +188,7 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
             playing={!paused}
             repeatMode={repeatMode}
             musicMode={musicMode}
+            collapsed={songsPanelCollapsed}
             onSelectSong={handleSelectSong}
             onPlay={() => video?.play()}
             onPause={() => video?.pause()}
@@ -192,6 +197,7 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
             onSeek={handleSeek}
             onToggleRepeatMode={handleToggleRepeatMode}
             onToggleMusicMode={handleToggleMusicMode}
+            onToggleCollapsed={handleToggleSongsPanelCollapsed}
           />
         ), songsPanelContainer)
       }

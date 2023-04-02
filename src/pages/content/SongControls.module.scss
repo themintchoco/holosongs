@@ -1,18 +1,25 @@
 .song-info {
-  display: block;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-pack: center;
   text-align: center;
   font-family: var(--ytd-video-primary-info-renderer-title-font-family, inherit);
   font-weight: bold;
   margin-top: 1em;
+  overflow: hidden;
 }
 
 .song-title {
   composes: song-info;
+
+  -webkit-line-clamp: 2;
   font-size: var(--ytd-video-primary-info-renderer-title-font-size, 2em);
 }
 
 .song-subtitle {
   composes: song-info;
+
+  -webkit-line-clamp: 3;
   font-size: var(--ytd-video-primary-info-renderer-title-font-size, 1.5em);
 }
 
