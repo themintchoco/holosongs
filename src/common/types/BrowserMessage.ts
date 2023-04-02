@@ -1,6 +1,6 @@
 export enum BrowserMessageType {
   tabStatusChange,
-  updateAvailable,
+  updateComplete,
   languageChanged,
 }
 
@@ -9,9 +9,9 @@ export interface BrowserMessageTabStatusChange {
   status: string,
 }
 
-export interface BrowserMessageUpdateAvailable {
-  type: BrowserMessageType.updateAvailable,
-  version: string,
+export interface BrowserMessageUpdateComplete {
+  type: BrowserMessageType.updateComplete,
+  previousVersion: string,
 }
 
 export interface BrowserMessageLanguageChanged {
@@ -20,6 +20,6 @@ export interface BrowserMessageLanguageChanged {
 
 export type BrowserMessage = (
   BrowserMessageTabStatusChange |
-  BrowserMessageUpdateAvailable |
+  BrowserMessageUpdateComplete |
   BrowserMessageLanguageChanged
 )
