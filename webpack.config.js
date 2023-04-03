@@ -94,8 +94,18 @@ const config = {
         ],
         use: [
           {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                '@babel/preset-env',
+                ['@babel/preset-react', { runtime: 'automatic' }],
+              ],
+            },
+          },
+          {
             loader: '@svgr/webpack',
             options: {
+              babel: false,
               icon: true,
             },
           },

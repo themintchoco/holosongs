@@ -111,7 +111,7 @@ const Options = () => {
     setEnableWhitelist(newPrefs.enableWhitelist)
 
     if (newPrefs.enableWhitelist) {
-      chrome.alarms.create('whitelist-updater', {
+      void chrome.alarms.create('whitelist-updater', {
         periodInMinutes: WHITELIST_UPDATE_INTERVAL,
       })
     } else {
