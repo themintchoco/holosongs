@@ -51,7 +51,8 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
   const [songsPanelCollapsed, setSongsPanelCollapsed] = useState(false)
 
   useEffect(() => {
-    if (!videoId || !apiKey || (enableWhitelist && channelId && !isWhitelisted(channelId))) return setSongs([])
+    if (!videoId || !channelId || apiKey === undefined || enableWhitelist === undefined || isWhitelisted(channelId) === undefined) return
+    if (!apiKey || enableWhitelist && !isWhitelisted(channelId)) return setSongs([])
 
     fetch(`https://holodex.net/api/v2/videos?id=${videoId}&include=songs`, {
       headers: {
@@ -65,7 +66,7 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
       .catch(() => {
         setSongs([])
       })
-  }, [videoId, apiKey, channelId])
+  }, [videoId, channelId, apiKey, enableWhitelist, isWhitelisted])
 
   useEffect(() => {
     setCurrentSong(null)

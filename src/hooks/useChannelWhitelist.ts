@@ -1,3 +1,5 @@
+import { useCallback } from 'react'
+
 import useStorage from './useStorage'
 import { updateWhitelist } from '../common/utils/channel-whitelist'
 
@@ -6,9 +8,9 @@ const useChannelWhitelist = () => {
   const [lastUpdated] = useStorage<number>('whitelistLastUpdated', 0)
   const [isWhitelistUpdating] = useStorage('whitelistUpdating', false)
 
-  const isWhitelisted = (channelId: string) => {
-    return whitelist ? channelId in whitelist : false
-  }
+  const isWhitelisted = useCallback((channelId: string) => {
+    return whitelist ? channelId in whitelist : undefined
+  }, [whitelist])
 
   const whitelistLastUpdated = lastUpdated ? new Date(lastUpdated) : lastUpdated === undefined ? undefined : null
 
