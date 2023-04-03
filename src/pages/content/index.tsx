@@ -59,7 +59,9 @@ chrome.runtime.onMessage.addListener(async (message: BrowserMessage, sender) => 
     return
   }
 
-  root.render(<></>)
+  root.render(
+    <Content songsPanelContainer={panelContainer} dexLinkContainer={linkContainer} />
+  )
   if (!videoId) return
 
   const player = await ensureSelector('.ytd-player') as HTMLElement
@@ -69,7 +71,7 @@ chrome.runtime.onMessage.addListener(async (message: BrowserMessage, sender) => 
     <Content
       player={player}
       videoId={videoId}
-      channelId={channelId}
+      channelId={channelId ?? undefined}
       songsPanelContainer={panelContainer}
       dexLinkContainer={linkContainer}
     />
