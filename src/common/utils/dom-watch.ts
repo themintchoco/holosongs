@@ -2,7 +2,9 @@ import filter from 'array-filter-inplace'
 
 interface WatchedSelector {
   target: string,
-  callback: (el: Element) => void
+  parent: ParentNode,
+  expiry?: Date,
+  callback: (el: Element) => void,
 }
 
 interface InjectionPosition {
@@ -19,12 +21,15 @@ const observer = new MutationObserver(() => {
   if (!timer) timer = setTimeout(() => {
     timer = null
 
-    filter(watchedSelectors, (watchedSelector: WatchedSelector) => {
-      const el = document.querySelector(watchedSelector.target)
+    filter(watchedSelectors, ({ target, parent, expiry, callback }: WatchedSelector) => {
+      if (expiry && new Date() > expiry) return false
+
+      const el = parent.querySelector(target)
       if (el) {
-        watchedSelector.callback(el)
+        callback(el)
         return false
       }
+
       return true
     })
 
@@ -45,11 +50,22 @@ export const ejectElement = (element: Element) => {
   element.remove()
 }
 
-export const ensureSelector = (target: string) => {
-  return new Promise((resolve) => {
-    const el = document.querySelector(target)
+export const ensureSelector = (target: string, options?: { parent?: ParentNode, timeout?: number }) => {
+  return new Promise((resolve, reject) => {
+    const el = (options?.parent ?? document).querySelector(target)
     if (el) return resolve(el)
 
-    watchedSelectors.push({ target, callback: resolve })
+    let expiry: Date | undefined = undefined
+
+    if (options?.timeout !== undefined) {
+      expiry = new Date()
+      expiry.setSeconds(expiry.getSeconds() + options.timeout)
+
+      setTimeout(() => {
+        reject(new Error(`Timeout waiting for ${target}`))
+      }, options.timeout * 1000)
+    }
+
+    watchedSelectors.push({ target, parent: options?.parent ?? document, expiry, callback: resolve })
   })
 }

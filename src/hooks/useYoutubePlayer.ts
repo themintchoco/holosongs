@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import { ensureSelector } from '../common/utils/dom-watch'
+
 const useYoutubePlayer = (player?: HTMLElement) => {
   const [video, setVideo] = useState<HTMLVideoElement | null>(null)
 
@@ -20,7 +22,10 @@ const useYoutubePlayer = (player?: HTMLElement) => {
   }
 
   const handleDurationChange = () => {
-    setPlayingAd(!!player?.querySelector('.ytp-ad-player-overlay'))
+    setPlayingAd(false)
+    ensureSelector('.ytp-ad-player-overlay', { parent: player, timeout: 5 })
+      .then(() => setPlayingAd(true))
+      .catch(() => null)
   }
 
   useEffect(() => {
