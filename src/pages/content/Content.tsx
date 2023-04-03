@@ -29,9 +29,9 @@ export interface Song {
 }
 
 export interface ContentProps {
-  player: HTMLElement,
-  videoId: string | null,
-  channelId: string | null,
+  player?: HTMLElement,
+  videoId?: string,
+  channelId?: string,
   songsPanelContainer: HTMLElement,
   dexLinkContainer: HTMLElement,
 }
@@ -51,7 +51,10 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
   const [songsPanelCollapsed, setSongsPanelCollapsed] = useState(false)
 
   useEffect(() => {
-    if (!videoId || !apiKey || !channelId || (enableWhitelist && !isWhitelisted(channelId))) return setSongs([])
+    if (!videoId || !channelId || !apiKey || enableWhitelist === undefined) return setSongs([])
+
+    const channelWhitelisted = isWhitelisted(channelId)
+    if (channelWhitelisted === undefined || enableWhitelist && !channelWhitelisted) return setSongs([])
 
     fetch(`https://holodex.net/api/v2/videos?id=${videoId}&include=songs`, {
       headers: {
@@ -65,14 +68,14 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
       .catch(() => {
         setSongs([])
       })
-  }, [videoId, apiKey, channelId])
+  }, [videoId, channelId, apiKey, enableWhitelist, isWhitelisted])
 
   useEffect(() => {
     setCurrentSong(null)
   }, [songs])
 
   useEffect(() => {
-    if (!video || playingAd) return
+    if (!video || songs.length === 0 || playingAd) return
 
     if (currentSong && currentTime >= Math.min(video.duration, currentSong.end) && repeatMode !== RepeatMode.Off) {
       switch (repeatMode) {

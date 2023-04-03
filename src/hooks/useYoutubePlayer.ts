@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const useYoutubePlayer = (player: HTMLElement) => {
+const useYoutubePlayer = (player?: HTMLElement) => {
   const [video, setVideo] = useState<HTMLVideoElement | null>(null)
 
   const [paused, setPaused] = useState(false)
@@ -20,11 +20,11 @@ const useYoutubePlayer = (player: HTMLElement) => {
   }
 
   const handleDurationChange = () => {
-    setPlayingAd(!!player.querySelector('.ytp-ad-player-overlay'))
+    setPlayingAd(!!player?.querySelector('.ytp-ad-player-overlay'))
   }
 
   useEffect(() => {
-    const newVideo = player.querySelector('video')
+    const newVideo = player?.querySelector('video') ?? null
     if (newVideo) {
       newVideo.addEventListener('play', handlePlay)
       newVideo.addEventListener('pause', handlePause)
