@@ -1,6 +1,6 @@
 {
   "name": "holosongs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Integrate Holodex features into YouTube!",
   "private": true,
   "type": "module",
