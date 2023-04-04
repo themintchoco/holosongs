@@ -70,7 +70,10 @@ const config = {
             loader: 'css-loader',
             options: {
               importLoaders: 1,
-              modules: { exportLocalsConvention: 'camelCaseOnly' },
+              modules: {
+                exportLocalsConvention: 'camelCaseOnly',
+                localIdentHashSalt: packageJson.version,
+              },
             }
           },
           {
