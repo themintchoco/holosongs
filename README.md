@@ -5,12 +5,14 @@
 # HoloSongs
 
 [![Build status](https://img.shields.io/github/actions/workflow/status/themintchoco/holosongs/release.yml?style=for-the-badge)](https://github.com/themintchoco/holosongs/actions/workflows/release.yml)
-[![Latest release](https://img.shields.io/github/v/release/themintchoco/holosongs?label=Latest%20release&style=for-the-badge)](https://github.com/themintchoco/holosongs/releases)
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/ipibfcnlipdkimfmajnddpboejkocplf?style=for-the-badge)](https://chrome.google.com/webstore/detail/holosongs/ipibfcnlipdkimfmajnddpboejkocplf)
+[![Latest release](https://img.shields.io/chrome-web-store/v/ipibfcnlipdkimfmajnddpboejkocplf?style=for-the-badge&label=Latest%20Release)](https://chrome.google.com/webstore/detail/holosongs/ipibfcnlipdkimfmajnddpboejkocplf)
+[![Users](https://img.shields.io/chrome-web-store/users/ipibfcnlipdkimfmajnddpboejkocplf?style=for-the-badge)](https://chrome.google.com/webstore/detail/holosongs/ipibfcnlipdkimfmajnddpboejkocplf)
+[![Localized](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fholosongs.mintchoco.workers.dev%2Fcrowdin)](https://crowdin.com/project/holosongs)
+[![Songs indexed](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fholosongs.mintchoco.workers.dev%2FsongsIndexed)](https://holodex.net/about)
 
 </div>
 
-Powered by the global Holodex community, HoloSongs (previously youtube-holodex) is a Chrome extension that adds a full featured media player to long YouTube livestreams so you can seek to your favorite songs and play them on repeat.
+Powered by the global Holodex community, HoloSongs is a Chrome extension that adds a full featured media player to long YouTube livestreams so you can seek to your favorite songs and play them on repeat.
 
 ![HoloSongs screenshot](docs/img/Songs.png)
 
