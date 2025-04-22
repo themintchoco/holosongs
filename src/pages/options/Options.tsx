@@ -24,6 +24,7 @@ import {
   StatLabel,
   StatNumber,
   Switch,
+  Text,
   Tooltip,
   VStack,
   useToast,
@@ -34,6 +35,8 @@ import useChannelWhitelist from '../../hooks/useChannelWhitelist'
 import { WHITELIST_UPDATE_INTERVAL } from '../../common/utils/channel-whitelist'
 import { BrowserMessageType } from '../../common/types/BrowserMessage'
 import { messageAll } from '../../common/utils/message'
+import { validateKey } from '../../common/utils/api'
+import { KeyValidationResultType } from '../../common/types/KeyValidationResult'
 
 const Options = () => {
   const [t, i18n] = useTranslation('options')
@@ -43,13 +46,14 @@ const Options = () => {
   const toast = useToast()
 
   const [apiKey, setApiKey] = useStorage('apiKey', '')
+  const [useApiKey, setUseApiKey] = useStorage('useApiKey', false)
   const [showDexButton, setShowDexButton] = useStorage('showDexButton', true)
   const [showSongControls, setShowSongControls] = useStorage('showSongControls', true)
   const [enableWhitelist, setEnableWhitelist] = useStorage('enableWhitelist', false)
 
   const { whitelist, updateWhitelist, whitelistLastUpdated, isWhitelistUpdating } = useChannelWhitelist()
 
-  const prefs = { apiKey, showDexButton, showSongControls, enableWhitelist }
+  const prefs = { apiKey, useApiKey, showDexButton, showSongControls, enableWhitelist }
 
   const {
     handleSubmit,
@@ -68,6 +72,7 @@ const Options = () => {
     reValidateMode: 'onSubmit',
   })
 
+  const watchUseApiKey = watch('useApiKey')
   const watchEnableWhitelist = watch('enableWhitelist')
 
   const whitelistLength = useMemo(() => {
@@ -78,21 +83,19 @@ const Options = () => {
     reset(prefs)
   }, Object.values(prefs))
 
-  const validateApiKey = (apiKey: string) => {
-    if (!dirtyFields.apiKey) return true
+  const validateApiKey = async (apiKey: string) => {
+    if (!dirtyFields.useApiKey && !dirtyFields.apiKey || !watchUseApiKey) return true
 
-    return fetch('https://holodex.net/api/v2/videos', {
-      headers: {
-        'X-APIKEY': apiKey
-      }
-    }).then((r) => {
-      if (r.status >= 500) throw new Error(t('apiKey.errors.serverError'))
-      if (r.status >= 400) throw new Error(t('apiKey.errors.invalidKey'))
+    const result = await validateKey(apiKey)
 
+    switch (result.type) {
+    case KeyValidationResultType.valid:
       return true
-    }).catch((e: Error) => {
-      return e.message ?? t('apiKey.errors.serverError')
-    })
+    case KeyValidationResultType.invalid:
+      return result.message ?? t('apiKey.errors.invalidKey')
+    case KeyValidationResultType.error:
+      return result.message ?? t('apiKey.errors.serverError')
+    }
   }
 
   const handleUpdateWhitelist = async () => {
@@ -107,6 +110,7 @@ const Options = () => {
 
   const onSubmit = (newPrefs: typeof prefs) => {
     setApiKey(newPrefs.apiKey)
+    setUseApiKey(newPrefs.useApiKey)
     setShowDexButton(newPrefs.showDexButton)
     setShowSongControls(newPrefs.showSongControls)
     setEnableWhitelist(newPrefs.enableWhitelist)
@@ -145,108 +149,134 @@ const Options = () => {
     </Center>
   ) : (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <FormControl isInvalid={!!errors.apiKey} isRequired>
-        <FormLabel htmlFor='apiKey'>{t('apiKey.label')}</FormLabel>
-        <Input id='apiKey' type='text' {...register('apiKey', {
-          required: t('apiKey.errors.required'),
-          setValueAs: (v: string) => v.trim(),
-          validate: (v: string | undefined) => v === undefined ? false : validateApiKey(v),
-        })} />
-        <FormErrorMessage>
-          { errors.apiKey?.message }
-        </FormErrorMessage>
-        <FormHelperText>
-          <Trans i18nKey='options:apiKey.helper'>
-            Get your API key from your
-            <Link href='https://holodex.net/login' isExternal>
-              account settings <Icon as={MdLaunch} verticalAlign='middle' />
-            </Link>
-          </Trans>
-        </FormHelperText>
-      </FormControl>
+      <VStack spacing={4} align='stretch'>
+        <VStack spacing={3}>
+          <FormControl>
+            <Flex>
+              <FormLabel htmlFor='showSongControls'>{t('showSongControls.label')}</FormLabel>
+              <Spacer />
+              <Controller
+                name='showSongControls'
+                control={control}
+                render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                  <Switch id='showSongControls' onChange={onChange} onBlur={onBlur} isChecked={value} name={name} ref={ref} />
+                )}
+              />
+            </Flex>
+          </FormControl>
 
-      <Divider my={4} />
+          <FormControl>
+            <Flex>
+              <FormLabel htmlFor='showDexButton'>{t('showDexButton.label')}</FormLabel>
+              <Spacer />
+              <Controller
+                name='showDexButton'
+                control={control}
+                render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                  <Switch id='showDexButton' onChange={onChange} onBlur={onBlur} isChecked={value} name={name} ref={ref} />
+                )}
+              />
+            </Flex>
+          </FormControl>
+        </VStack>
 
-      <VStack spacing={3}>
-        <FormControl>
-          <Flex>
-            <FormLabel htmlFor='showSongControls'>{t('showSongControls.label')}</FormLabel>
-            <Spacer />
-            <Controller
-              name='showSongControls'
-              control={control}
-              render={({ field: { onChange, onBlur, value, name, ref } }) => (
-                <Switch id='showSongControls' onChange={onChange} onBlur={onBlur} isChecked={value} name={name} ref={ref} />
-              )}
-            />
-          </Flex>
-        </FormControl>
-
-        <FormControl>
-          <Flex>
-            <FormLabel htmlFor='showDexButton'>{t('showDexButton.label')}</FormLabel>
-            <Spacer />
-            <Controller
-              name='showDexButton'
-              control={control}
-              render={({ field: { onChange, onBlur, value, name, ref } }) => (
-                <Switch id='showDexButton' onChange={onChange} onBlur={onBlur} isChecked={value} name={name} ref={ref} />
-              )}
-            />
-          </Flex>
-        </FormControl>
-      </VStack>
-
-      <Divider my={4} />
-
-      <VStack spacing={3} align='stretch'>
-        <FormControl>
-          <Flex>
-            <FormLabel htmlFor='enableWhitelist'>{t('enableWhitelist.label')}</FormLabel>
-            <Spacer />
-            <Controller
-              name='enableWhitelist'
-              control={control}
-              render={({ field: { onChange, onBlur, value, name, ref } }) => (
-                <Switch id='enableWhitelist' onChange={onChange} onBlur={onBlur} isChecked={value} name={name} ref={ref} />
-              )}
-            />
-          </Flex>
-          <FormHelperText>
-            { t('enableWhitelist.helper') }
-          </FormHelperText>
-        </FormControl>
-
-        <Flex style={{marginInline: '-20px'}}>
-          <Collapse
-            in={watchEnableWhitelist}
-            style={{flexGrow: 1}}>
-            <VStack align='stretch'>
-              <Stat px='20px'>
-                <StatLabel>{t('whitelistStat.label')}</StatLabel>
-                <StatNumber>{t('whitelistStat.length', { length: whitelistLength })}</StatNumber>
-                <StatHelpText>
-                  { whitelistLastUpdated ? t('whitelistStat.lastUpdated', { whitelistLastUpdated }) : t('whitelistStat.lastUpdatedNever')}
-                </StatHelpText>
-              </Stat>
-
-              <Button
-                colorScheme='blue'
-                variant='ghost'
-                px='20px'
-                borderRadius={0}
-                justifyContent='space-between'
-                isLoading={isWhitelistUpdating}
-                isDisabled={updatedWhitelist}
-                spinnerPlacement='end'
-                rightIcon={!isWhitelistUpdating && updatedWhitelist ? <MdCheck /> : undefined}
-                loadingText={t('updateChannels.title.loading')}
-                onClick={handleUpdateWhitelist}>
-                { !isWhitelistUpdating && updatedWhitelist ? t('updateChannels.title.success') : t('updateChannels.title.default') }
-              </Button>
-            </VStack>
-          </Collapse>
+        <Flex align='center' gap={4}>
+          <Text whiteSpace='nowrap' textTransform='uppercase'>{t('advanced.label')}</Text>
+          <Divider />
         </Flex>
+
+        <VStack spacing={3} align='stretch'>
+          <FormControl>
+            <Flex>
+              <FormLabel htmlFor='useApiKey'>{t('useApiKey.label')}</FormLabel>
+              <Spacer />
+              <Controller
+                name='useApiKey'
+                control={control}
+                render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                  <Switch id='useApiKey' onChange={onChange} onBlur={onBlur} isChecked={value} name={name} ref={ref} />
+                )}
+              />
+            </Flex>
+            <FormHelperText m={0}>
+              { t('useApiKey.helper') }
+            </FormHelperText>
+          </FormControl>
+
+          <Collapse
+            in={watchUseApiKey}
+            style={{flexGrow: 1}}>
+            <FormControl isInvalid={!!errors.apiKey} isRequired={watchUseApiKey}>
+              <FormLabel htmlFor='apiKey'>{t('apiKey.label')}</FormLabel>
+              <Input id='apiKey' type='text' {...register('apiKey', {
+                required: watchUseApiKey ? t('apiKey.errors.required') : undefined,
+                setValueAs: (v: string) => v.trim(),
+                validate: (v: string | undefined) => v === undefined ? false : validateApiKey(v),
+              })} />
+              <FormErrorMessage>
+                { errors.apiKey?.message }
+              </FormErrorMessage>
+              <FormHelperText>
+                <Trans i18nKey='options:apiKey.helper'>
+                  Get your API key from your
+                  <Link href='https://holodex.net/login' isExternal>
+                    account settings <Icon as={MdLaunch} verticalAlign='middle' />
+                  </Link>
+                </Trans>
+              </FormHelperText>
+            </FormControl>
+          </Collapse>
+        </VStack>
+
+        <VStack spacing={3} align='stretch'>
+          <FormControl>
+            <Flex>
+              <FormLabel htmlFor='enableWhitelist'>{t('enableWhitelist.label')}</FormLabel>
+              <Spacer />
+              <Controller
+                name='enableWhitelist'
+                control={control}
+                render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                  <Switch id='enableWhitelist' onChange={onChange} onBlur={onBlur} isChecked={value} name={name} ref={ref} />
+                )}
+              />
+            </Flex>
+            <FormHelperText m={0}>
+              { t('enableWhitelist.helper') }
+            </FormHelperText>
+          </FormControl>
+
+          <Flex style={{marginInline: '-20px'}}>
+            <Collapse
+              in={watchEnableWhitelist}
+              style={{flexGrow: 1}}>
+              <VStack align='stretch'>
+                <Stat px='20px'>
+                  <StatLabel>{t('whitelistStat.label')}</StatLabel>
+                  <StatNumber>{t('whitelistStat.length', { length: whitelistLength })}</StatNumber>
+                  <StatHelpText>
+                    { whitelistLastUpdated ? t('whitelistStat.lastUpdated', { whitelistLastUpdated }) : t('whitelistStat.lastUpdatedNever')}
+                  </StatHelpText>
+                </Stat>
+
+                <Button
+                  colorScheme='blue'
+                  variant='ghost'
+                  px='20px'
+                  borderRadius={0}
+                  justifyContent='space-between'
+                  isLoading={isWhitelistUpdating}
+                  isDisabled={updatedWhitelist}
+                  spinnerPlacement='end'
+                  rightIcon={!isWhitelistUpdating && updatedWhitelist ? <MdCheck /> : undefined}
+                  loadingText={t('updateChannels.title.loading')}
+                  onClick={handleUpdateWhitelist}>
+                  { !isWhitelistUpdating && updatedWhitelist ? t('updateChannels.title.success') : t('updateChannels.title.default') }
+                </Button>
+              </VStack>
+            </Collapse>
+          </Flex>
+        </VStack>
       </VStack>
 
       <Flex

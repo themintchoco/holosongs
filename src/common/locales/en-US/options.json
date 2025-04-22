@@ -1,4 +1,7 @@
 {
+  "advanced": {
+    "label": "Advanced"
+  },
   "apiKey": {
     "errors": {
       "invalidKey": "Invalid API key. Please check your key and try again.",
@@ -29,6 +32,10 @@
       "loading": "Updating channels...",
       "success": "Updated channels successfully"
     }
+  },
+  "useApiKey": {
+    "helper": "Using your own API key enhances privacy.",
+    "label": "Use your own API key"
   },
   "whitelistStat": {
     "label": "Channels",

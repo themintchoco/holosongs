@@ -1,5 +1,7 @@
 import { Mutex, tryAcquire } from 'async-mutex'
 
+import { api } from './api'
+
 export const WHITELIST_UPDATE_INTERVAL = 60 * 24 * 7 // 1 week
 
 const mutex = new Mutex()
@@ -16,8 +18,6 @@ export const updateWhitelist = async () => {
     return false
   }
 
-  const { apiKey } = await chrome.storage.local.get('apiKey')
-
   const whitelist: Record<string, boolean> = {}
 
   let offset = 0
@@ -26,11 +26,7 @@ export const updateWhitelist = async () => {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
-      const channels = await (await fetch(`https://holodex.net/api/v2/channels?type=vtuber&limit=${limit}&offset=${offset}`, {
-        headers: {
-          'X-APIKEY': apiKey as string
-        }
-      })).json() as { id: string }[]
+      const channels = await (await api(`channels?type=vtuber&limit=${limit}&offset=${offset}`)).json() as { id: string }[]
 
       if (!channels.length) break
 

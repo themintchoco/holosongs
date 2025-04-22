@@ -1,4 +1,7 @@
 {
+  "advanced": {
+    "label": "高级"
+  },
   "apiKey": {
     "errors": {
       "invalidKey": "该密钥无效，请检查后重试。",
@@ -29,6 +32,10 @@
       "loading": "更新中...",
       "success": "更新成功"
     }
+  },
+  "useApiKey": {
+    "helper": "使用自己的API密钥可以提升隐私保护。",
+    "label": "使用自定义API密钥"
   },
   "whitelistStat": {
     "label": "频道",

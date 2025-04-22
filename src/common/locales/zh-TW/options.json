@@ -1,4 +1,7 @@
 {
+  "advanced": {
+    "label": "進階設定"
+  },
   "apiKey": {
     "errors": {
       "invalidKey": "此密鑰無效，請檢查並重試。",
@@ -29,6 +32,10 @@
       "loading": "更新中...",
       "success": "更新成功"
     }
+  },
+  "useApiKey": {
+    "helper": "使用自己的API密鑰可提升隱私保護。",
+    "label": "使用自訂API密鑰"
   },
   "whitelistStat": {
     "label": "頻道",

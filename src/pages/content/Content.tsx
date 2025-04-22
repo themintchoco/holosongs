@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
+import { api } from '../../common/utils/api'
 import useStorage from '../../hooks/useStorage'
 import useYoutubePlayer from '../../hooks/useYoutubePlayer'
 import useChannelWhitelist from '../../hooks/useChannelWhitelist'
@@ -37,7 +38,6 @@ export interface ContentProps {
 }
 
 const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkContainer } : ContentProps) => {
-  const [apiKey] = useStorage<string>('apiKey')
   const [showDexButton] = useStorage('showDexButton', true)
   const [enableWhitelist] = useStorage('enableWhitelist', false)
 
@@ -51,16 +51,13 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
   const [songsPanelCollapsed, setSongsPanelCollapsed] = useState(false)
 
   useEffect(() => {
-    if (!videoId || !channelId || !apiKey || enableWhitelist === undefined) return setSongs([])
+    if (!videoId || !channelId || enableWhitelist === undefined) return setSongs([])
 
     const channelWhitelisted = isWhitelisted(channelId)
     if (channelWhitelisted === undefined || enableWhitelist && !channelWhitelisted) return setSongs([])
 
-    fetch(`https://holodex.net/api/v2/videos?id=${videoId}&include=songs`, {
-      headers: {
-        'X-APIKEY': apiKey,
-      }
-    }).then((r) => r.json())
+    api(`videos?id=${videoId}&include=songs`)
+      .then((r) => r.json())
       .then((data: { songs: Song[] }[]) => {
         if (data.length <= 0 || !data[0].songs) throw new Error()
         setSongs(data[0].songs.sort((a, b) => { return a.start - b.start }))
@@ -68,7 +65,7 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
       .catch(() => {
         setSongs([])
       })
-  }, [videoId, channelId, apiKey, enableWhitelist, isWhitelisted])
+  }, [videoId, channelId, enableWhitelist, isWhitelisted])
 
   useEffect(() => {
     setCurrentSong(null)

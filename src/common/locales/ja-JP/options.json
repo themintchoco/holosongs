@@ -1,4 +1,7 @@
 {
+  "advanced": {
+    "label": "詳細設定"
+  },
   "apiKey": {
     "errors": {
       "invalidKey": "APIキーが無効です。ご確認の上、再度お試しください。",
@@ -29,6 +32,10 @@
       "loading": "更新中...",
       "success": "リストを更新しました"
     }
+  },
+  "useApiKey": {
+    "helper": "自分のAPIキーを使うことでプライバシーが向上します。",
+    "label": "自分のAPIキーを使用する"
   },
   "whitelistStat": {
     "label": "チャンネル",
