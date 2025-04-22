@@ -1,6 +1,9 @@
 import { BrowserMessageType } from '../../common/types/BrowserMessage'
 import { messageOne, messageAll } from '../../common/utils/message'
 import { updateWhitelist } from '../../common/utils/channel-whitelist'
+import { ServiceWorkerMessage, ServiceWorkerMessageType } from '../../common/types/ServiceWorkerMessage'
+
+void chrome.storage.local.set({ whitelistUpdating: false })
 
 chrome.runtime.onInstalled.addListener(async ({ reason, previousVersion }) => {
   if (reason === chrome.runtime.OnInstalledReason.INSTALL) {
@@ -30,6 +33,14 @@ chrome.runtime.onInstalled.addListener(async ({ reason, previousVersion }) => {
 
 chrome.alarms.onAlarm.addListener(({ name }) => {
   if (name === 'whitelist-updater') {
+    void updateWhitelist()
+  }
+})
+
+chrome.runtime.onMessage.addListener((message: ServiceWorkerMessage, sender) => {
+  if (sender.id !== chrome.runtime.id) return
+
+  if (message.type === ServiceWorkerMessageType.updateWhitelist) {
     void updateWhitelist()
   }
 })

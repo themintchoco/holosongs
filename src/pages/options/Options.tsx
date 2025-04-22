@@ -96,7 +96,8 @@ const Options = () => {
   }
 
   const handleUpdateWhitelist = async () => {
-    setUpdatedWhitelist(await updateWhitelist())
+    await updateWhitelist()
+    setUpdatedWhitelist(true)
   }
 
   const handleLanguageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -238,10 +239,10 @@ const Options = () => {
                 isLoading={isWhitelistUpdating}
                 isDisabled={updatedWhitelist}
                 spinnerPlacement='end'
-                rightIcon={updatedWhitelist ? <MdCheck /> : undefined}
+                rightIcon={!isWhitelistUpdating && updatedWhitelist ? <MdCheck /> : undefined}
                 loadingText={t('updateChannels.title.loading')}
                 onClick={handleUpdateWhitelist}>
-                { updatedWhitelist ? t('updateChannels.title.success') : t('updateChannels.title.default') }
+                { !isWhitelistUpdating && updatedWhitelist ? t('updateChannels.title.success') : t('updateChannels.title.default') }
               </Button>
             </VStack>
           </Collapse>
