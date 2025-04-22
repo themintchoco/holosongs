@@ -23,7 +23,7 @@ const useYoutubePlayer = (player?: HTMLElement) => {
 
   const handleDurationChange = () => {
     setPlayingAd(false)
-    ensureSelector('.ytp-ad-player-overlay', { parent: player, timeout: 5 })
+    ensureSelector('.ytp-ad-player-overlay-layout', { parent: player, timeout: 5 })
       .then(() => setPlayingAd(true))
       .catch(() => null)
   }
