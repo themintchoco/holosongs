@@ -9,6 +9,7 @@ import SongProgressBar from './SongProgressBar'
 
 export interface SongsPanelProps {
   songs: Song[],
+  playedSongs: Set<Song>,
   currentSong: Song | null,
   currentSongProgress: number | null,
   playing: boolean,
@@ -28,6 +29,7 @@ export interface SongsPanelProps {
 
 const SongsPanel = ({
   songs,
+  playedSongs,
   currentSong,
   currentSongProgress,
   playing,
@@ -60,7 +62,7 @@ const SongsPanel = ({
             <YoutubePanelListContent>
               {
                 songs.map((song) => (
-                  <SongItem key={song.id} song={song} active={song.id === currentSong?.id} onSelectSong={onSelectSong} />
+                  <SongItem key={song.id} song={song} active={song.id === currentSong?.id} played={playedSongs.has(song)} onSelectSong={onSelectSong} />
                 ))
               }
             </YoutubePanelListContent>

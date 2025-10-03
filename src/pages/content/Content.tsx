@@ -45,6 +45,7 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
   const { video, paused, currentTime, playingAd } = useYoutubePlayer(player)
 
   const [songs, setSongs] = useState<Song[]>([])
+  const [playedSongs, setPlayedSongs] = useState<Set<Song>>(new Set())
   const [currentSong, setCurrentSong] = useState<Song | null>(null)
   const [repeatMode, setRepeatMode] = useState(RepeatMode.Off)
   const [musicMode, setMusicMode] = useState(MusicMode.Off)
@@ -101,6 +102,12 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
       }
 
       setCurrentSong(nextSong)
+      setPlayedSongs((playedSongs) => {
+        if (nextSong && (!playedSongs.size || !playedSongs.has(nextSong))) {
+          return new Set(playedSongs).add(nextSong)
+        }
+        return playedSongs
+      })
     }
   }, [currentTime])
 
@@ -183,6 +190,7 @@ const Content = ({ player, videoId, channelId, songsPanelContainer, dexLinkConta
         songs.length && createPortal((
           <SongsPanel
             songs={songs}
+            playedSongs={playedSongs}
             currentSong={!playingAd ? currentSong : null}
             currentSongProgress={(currentSong && !playingAd) ? currentTime - currentSong.start : null}
             playing={!paused}
