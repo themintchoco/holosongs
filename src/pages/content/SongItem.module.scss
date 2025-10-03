@@ -34,6 +34,10 @@
       overflow: hidden;
       color: var(--yt-spec-text-secondary);
     }
+
+    &.played {
+      opacity: 0.5;
+    }
   }
 
   &.active {
