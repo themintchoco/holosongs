@@ -8,7 +8,7 @@ import CopyWebpackPlugin from 'copy-webpack-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import { isNotJunk } from 'junk'
 
-import packageJson from './package.json' assert {type: 'json'}
+import packageJson from './package.json' with {type: 'json'}
 
 
 const __filename = fileURLToPath(import.meta.url)
