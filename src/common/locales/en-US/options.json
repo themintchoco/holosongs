@@ -15,6 +15,9 @@
     "helper": "Only query the API when watching channels tracked by Holodex. ",
     "label": "Limit API requests"
   },
+  "fadePlayedSongs": {
+    "label": "Fade played songs"
+  },
   "savedChanges": "Your changes were saved",
   "showDexButton": {
     "label": "Show Holodex button in player"

@@ -15,6 +15,9 @@
     "helper": "Holodexに登録されているチャンネルを視聴している場合だけAPIを呼び出す。",
     "label": "APIリクエストを制限する"
   },
+  "fadePlayedSongs": {
+    "label": "再生曲フェード"
+  },
   "savedChanges": "変更の保存に成功しました",
   "showDexButton": {
     "label": "Holodex ボタンを表示する"

@@ -48,12 +48,13 @@ const Options = () => {
   const [apiKey, setApiKey] = useStorage('apiKey', '')
   const [useApiKey, setUseApiKey] = useStorage('useApiKey', false)
   const [showDexButton, setShowDexButton] = useStorage('showDexButton', true)
+  const [fadePlayedSongs, setFadePlayedSongs] = useStorage('fadePlayedSongs', false)
   const [showSongControls, setShowSongControls] = useStorage('showSongControls', true)
   const [enableWhitelist, setEnableWhitelist] = useStorage('enableWhitelist', false)
 
   const { whitelist, updateWhitelist, whitelistLastUpdated, isWhitelistUpdating } = useChannelWhitelist()
 
-  const prefs = { apiKey, useApiKey, showDexButton, showSongControls, enableWhitelist }
+  const prefs = { apiKey, useApiKey, showDexButton, fadePlayedSongs, showSongControls, enableWhitelist }
 
   const {
     handleSubmit,
@@ -112,6 +113,7 @@ const Options = () => {
     setApiKey(newPrefs.apiKey)
     setUseApiKey(newPrefs.useApiKey)
     setShowDexButton(newPrefs.showDexButton)
+    setFadePlayedSongs(newPrefs.fadePlayedSongs)
     setShowSongControls(newPrefs.showSongControls)
     setEnableWhitelist(newPrefs.enableWhitelist)
 
@@ -174,6 +176,20 @@ const Options = () => {
                 control={control}
                 render={({ field: { onChange, onBlur, value, name, ref } }) => (
                   <Switch id='showDexButton' onChange={onChange} onBlur={onBlur} isChecked={value} name={name} ref={ref} />
+                )}
+              />
+            </Flex>
+          </FormControl>
+
+          <FormControl>
+            <Flex>
+              <FormLabel htmlFor='fadePlayedSongs'>{t('fadePlayedSongs.label')}</FormLabel>
+              <Spacer />
+              <Controller
+                name='fadePlayedSongs'
+                control={control}
+                render={({ field: { onChange, onBlur, value, name, ref } }) => (
+                  <Switch id='fadePlayedSongs' onChange={onChange} onBlur={onBlur} isChecked={value} name={name} ref={ref} />
                 )}
               />
             </Flex>
