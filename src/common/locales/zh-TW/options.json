@@ -15,6 +15,9 @@
     "helper": "將API訪問限制為受Holodex跟踪的頻道。",
     "label": "限制API訪問"
   },
+  "fadePlayedSongs": {
+    "label": "淡化已播歌曲"
+  },
   "savedChanges": "更改已成功保存",
   "showDexButton": {
     "label": "顯示 Holodex 鏈接"
