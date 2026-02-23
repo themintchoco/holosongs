@@ -1,6 +1,5 @@
 .panel {
   color: var(--yt-spec-text-primary);
-  border: 1px solid var(--yt-spec-10-percent-layer);
   margin-bottom: var(--ytd-margin-6x);
   border-radius: 12px;
   overflow: hidden;
@@ -15,7 +14,7 @@
   }
 
   .footer {
-    background: var(--yt-spec-brand-background-primary);
+    border-top: 1px solid var(--yt-spec-additive-background);
     padding: 1em 16px;
   }
 }

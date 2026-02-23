@@ -13,7 +13,7 @@
     .bar {
       display: flex;
       align-items: center;
-      background-color: var(--yt-spec-10-percent-layer);
+      background-color: var(--yt-spec-additive-background);
       height: 100%;
   
       &.pulsing {
@@ -34,7 +34,7 @@
       .ghost {
         width: 0px;
         height: 100%;
-        background-color: var(--yt-spec-10-percent-layer);
+        background-color: var(--yt-spec-additive-background);
         opacity: 0;
         transition: opacity 200ms;
       }

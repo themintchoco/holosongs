@@ -12,7 +12,7 @@
     height: 50px;
     flex-shrink: 0;
     border-radius: 8px;
-    background-color: var(--yt-spec-10-percent-layer);
+    background-color: var(--yt-spec-additive-background);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -41,10 +41,10 @@
   }
 
   &.active {
-    background-color: var(--yt-spec-10-percent-layer);
+    background-color: var(--yt-spec-additive-background);
 
     .art {
-      outline: 2px solid var(--yt-spec-themed-blue);
+      outline: 2px solid var(--yt-spec-additive-background-inverse);
     }
   }
 }

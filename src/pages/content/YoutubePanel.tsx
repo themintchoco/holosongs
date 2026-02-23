@@ -46,7 +46,7 @@ export const YoutubePanelFooter = ({ children } : React.PropsWithChildren) => {
 
 const YoutubePanel = ({ children } : React.PropsWithChildren) => {
   return (
-    <div className={styles.panel}>
+    <div className={cx(styles.panel, 'ytd-playlist-panel-renderer')} id='container'>
       { children }
     </div>
   )
